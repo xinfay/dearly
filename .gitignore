@@ -25,3 +25,4 @@ dist-ssr
 
 # Environment files - containing printful API key
 /src/backend/.env
+/src/backend/.env.example
