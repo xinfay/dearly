@@ -1,6 +1,8 @@
 # Dearly – React + Vite + FastAPI
 This project is a web application built using **React** (with **Vite** as the build tool) for the frontend and **FastAPI** for the backend. It includes routing via React Router and makes use of various useful packages for UI and backend request handling.
 
+First, run 'git clone https://github.com/xinfay/dearly'
+
 ## 🔧 Project Structure
 
 ```
