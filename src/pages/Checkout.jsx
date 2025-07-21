@@ -150,7 +150,7 @@ function Checkout() {
       </h3>
       
       {/* STRETCH A CART FUNCTION */}
-      {moc.map((item) => (
+      {mockProduct.map((item) => (
         <div key={item.id} className="flex space-x-4 mb-6">
           <img
             src={item.images}
