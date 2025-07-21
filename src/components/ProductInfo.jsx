@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { StarRating } from './StarRating';
 import { Truck, Shield, Leaf, Award } from 'lucide-react';
 import { mockProduct } from '../data/mockProduct';
-import itemsList from '../data/items'
 import { useNavigate } from 'react-router-dom';
 
 export const ProductInfo = ({ product }) => {

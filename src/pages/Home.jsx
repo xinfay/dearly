@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {Heart, Sparkles, Gift, Users, Clock, Package, Star, Brain, ChevronLeft, ChevronRight, Mail} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import itemsList from '../data/items'
+import { mockProduct } from '../data/mockProduct';
 import quotes from '../data/testimonials'
 
 
@@ -136,7 +136,7 @@ function Home() {
           </h2>
 
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
-            {itemsList.map((item, index) => (
+            {mockProduct.map((item, index) => (
               <div
                 key={index}
                 className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-shadow duration-300 overflow-hidden group"
@@ -144,7 +144,7 @@ function Home() {
                 {/* Image */}
                 <div className="relative overflow-hidden">
                   <img
-                    src={item.image}
+                    src={item.images}
                     alt={item.name}
                     className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
@@ -157,7 +157,7 @@ function Home() {
                     {item.name}
                   </h3>
                   <p className="text-gray-600 mb-6 leading-relaxed text-base sm:text-lg">
-                    {item.description}
+                    {item.short_description}
                   </p>
                   <button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white py-3 px-6 rounded-xl font-medium hover:from-rose-500 hover:to-pink-600 transition-all duration-300 transform hover:scale-105"
                           onClick={() => viewRedirect(item.id)}

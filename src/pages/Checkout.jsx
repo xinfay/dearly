@@ -4,11 +4,14 @@ import { Heart, Lock, Truck, Gift, ArrowLeft, CreditCard, Smartphone, Wallet } f
 import { useLocation } from "react-router-dom";
 import Layout from '../components/Layout';
 import { countryOptions, usStateOptions, caStateOptions } from '../data/countryStateCode';
+import { mockProduct } from '../data/mockProduct'; // Assuming you have a mock product data file
 
 
 function Checkout() {
   const location = useLocation();
   const itemId = location.state?.itemId;
+  const quantity = location.state?.quantity || 1;
+  const item = mockProduct.find((anItem) => anItem.id === itemId);
 
   const [currentStep, setCurrentStep] = useState('shipping');
   const [shippingInfo, setShippingInfo] = useState({
@@ -25,18 +28,6 @@ function Checkout() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
   const [isGift, setIsGift] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
-
-  // Mock checkout items
-  const checkoutItems = [
-    {
-      id: '1',
-      name: 'Ceramic Mug',
-      customization: 'Custom design: "For the moments that matter most" with watercolor hearts',
-      image: 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=400',
-      price: 24.99,
-      quantity: 1
-    }
-  ];
 
   const paymentMethods = [
     {
@@ -59,9 +50,9 @@ function Checkout() {
     }
   ];
 
-  const subtotal = checkoutItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = Number(item.price);
   const shipping = 8.99;
-  const tax = subtotal * 0.08;
+  const tax = subtotal * 0.13;
   const total = subtotal + shipping + tax;
 
   const handleInputChange = (field, value) => {
@@ -79,7 +70,7 @@ function Checkout() {
   const handlePlaceOrder = async () => {
     // Here you would integrate with Stripe
     console.log('Processing order with Stripe...', {
-      items: checkoutItems,
+      items: item,
       shipping: shippingInfo,
       paymentMethod: selectedPaymentMethod,
       total: total,
@@ -158,20 +149,21 @@ function Checkout() {
         Your Heartfelt Creation
       </h3>
       
-      {checkoutItems.map((item) => (
+      {/* STRETCH A CART FUNCTION */}
+      {moc.map((item) => (
         <div key={item.id} className="flex space-x-4 mb-6">
           <img
-            src={item.image}
+            src={item.images}
             alt={item.name}
             className="w-16 h-16 rounded-lg object-cover"
           />
           <div className="flex-1">
             <h4 className="font-medium text-gray-900">{item.name}</h4>
             <p className="text-sm text-gray-600 mt-1 leading-relaxed">
-              {item.customization}
+              {item.short_description}
             </p>
             <div className="flex justify-between items-center mt-2">
-              <span className="text-sm text-gray-500">Qty: {item.quantity}</span>
+              <span className="text-sm text-gray-500">Qty: {quantity}</span>
               <span className="font-medium text-gray-900">${item.price}</span>
             </div>
           </div>

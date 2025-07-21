@@ -1,21 +1,21 @@
 export const mockProduct = [
   {
     id: "0",
-    name: "Glossy Mug",
+    name: "Custom Mug",
     images: [
       "https://images.unsplash.com/photo-1516390118834-21602d501886?q=80&w=2736&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
       "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg?auto=compress&cs=tinysrgb&w=600",
       "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=600",
       "https://images.pexels.com/photos/1040424/pexels-photo-1040424.jpeg?auto=compress&cs=tinysrgb&w=600"
     ],
-    price: "12.95",
-    deliveryEstimate: "10–11 days",
+    price: "8.25",
+    deliveryEstimate: "3-5 days",
     sizes: ["11 Oz"],
     technique: "Sublimation",
-    features: ["Eco-friendly", "Premium quality", "Bestseller", "Dishwasher safe", "11oz capacity", "Lead and BPA free"],
+    features: ["Bestseller", "Dishwasher safe", "11oz capacity", "Lead and BPA free"],
     tags: ["Ceramic", "Glossy"],
-    rating: 4.5,
-    reviews: 562,
+    rating: 5,
+    reviews: 1978,
     short_description: "Transform your morning routine with personalized warmth",
     description:
       "This sturdy mug is perfect for your morning coffee, afternoon tea, or whatever hot beverage you enjoy. It's glossy white and yields vivid prints that retain their quality when dish-washed and microwaved. Add a graphic of your choice and add this best-seller to your store, so others can enjoy your magical designs too!",
@@ -38,22 +38,22 @@ export const mockProduct = [
     id: "1",
     name: "Memory Journal",
     images: [
-      "https://images.unsplash.com/photo-1516390118834-21602d501886?q=80&w=2736&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1516414447565-b14be0adf13e?q=80&w=2573&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
       "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg?auto=compress&cs=tinysrgb&w=600",
       "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=600",
       "https://images.pexels.com/photos/1040424/pexels-photo-1040424.jpeg?auto=compress&cs=tinysrgb&w=600"
     ],
     price: "12.95",
-    deliveryEstimate: "10–11 days",
-    sizes: ["11 Oz"],
-    technique: "Sublimation",
-    features: ["Eco-friendly", "Premium quality", "Bestseller", "Dishwasher safe", "11oz capacity", "Lead and BPA free"],
-    tags: ["Ceramic", "Glossy"],
-    rating: 4.5,
-    reviews: 562,
-    short_description: "Transform your morning routine with personalized warmth",
+    deliveryEstimate: "15–21 days",
+    sizes: ["8\"x5.75\""],
+    technique: "Digital Print",
+    features: ["Eco-friendly", "Premium quality", "Bestseller"],
+    tags: ["Perforated Pages", "Matte Finish", "Casewrap Binding"],
+    rating: 0,
+    reviews: 0,
+    short_description: "A beautiful space for thoughts, dreams, and memories",
     description:
-      "This sturdy mug is perfect for your morning coffee, afternoon tea, or whatever hot beverage you enjoy. It's glossy white and yields vivid prints that retain their quality when dish-washed and microwaved. Add a graphic of your choice and add this best-seller to your store, so others can enjoy your magical designs too!",
+      "Expand your catalog with the hardcover matte journal—perfect for creatives, lifestyle brands, and stationery collections. It’s easy to brand, gift, and bundle into curated product sets. The matte hardcover, flexible binding, and tear-out pages offer a clean, polished look. Customize the front and back to tell a full visual story.",
     colors: ["White"],
     fitInfo: {
       fabricWeight: "308 g/m²",
@@ -63,9 +63,7 @@ export const mockProduct = [
       shoulders: "Drop shoulders"
     },
     disclaimers: [
-      "Details from the inner fabric layer may subtly show through.",
-      "This is an expected result of the printing process.",
-      "In case of low fabric stock, we may substitute a similar option."
+      "The journal has a 0.5\" x 0.5\" (1.27 cm x 1.27 cm) barcode on the back cover."
     ]
   },
 
@@ -73,22 +71,22 @@ export const mockProduct = [
     id: "2",
     name: "Artisan Tote Bag",
     images: [
-      "https://images.unsplash.com/photo-1516390118834-21602d501886?q=80&w=2736&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1572966059657-6e8910c8c3c0?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fHRvdGUlMjBiYWd8ZW58MHx8MHx8fDA%3D?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
       "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg?auto=compress&cs=tinysrgb&w=600",
       "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=600",
       "https://images.pexels.com/photos/1040424/pexels-photo-1040424.jpeg?auto=compress&cs=tinysrgb&w=600"
     ],
-    price: "12.95",
-    deliveryEstimate: "10–11 days",
-    sizes: ["11 Oz"],
-    technique: "Sublimation",
-    features: ["Eco-friendly", "Premium quality", "Bestseller", "Dishwasher safe", "11oz capacity", "Lead and BPA free"],
-    tags: ["Ceramic", "Glossy"],
+    price: "21.50",
+    deliveryEstimate: "6–8 days",
+    sizes: ["One Size"],
+    technique: "DTG Print",
+    features: ["Eco-friendly", "Premium quality", "Bestseller"],
+    tags: ["Organic Cotton", "Vegan"],
     rating: 4.5,
     reviews: 562,
-    short_description: "Transform your morning routine with personalized warmth",
+    short_description: "Carry your story wherever you go, hang it off your shoulder.",
     description:
-      "This sturdy mug is perfect for your morning coffee, afternoon tea, or whatever hot beverage you enjoy. It's glossy white and yields vivid prints that retain their quality when dish-washed and microwaved. Add a graphic of your choice and add this best-seller to your store, so others can enjoy your magical designs too!",
+      "There’s nothing trendier than being eco-friendly! Create a design and showcase it on this organic cotton twill tote bag! The large print area and the solid color of the bag are sure to make any design stand out. This roomy bag fits groceries, books, and so much more.",
     colors: ["White"],
     fitInfo: {
       fabricWeight: "308 g/m²",
@@ -98,9 +96,11 @@ export const mockProduct = [
       shoulders: "Drop shoulders"
     },
     disclaimers: [
-      "Details from the inner fabric layer may subtly show through.",
-      "This is an expected result of the printing process.",
-      "In case of low fabric stock, we may substitute a similar option."
+      "100% certified organic cotton 3/1 twill",
+      "Fabric weight: 8 oz/yd² (272 g/m²)",
+      "Dimensions: 16\" x 14 ½\" x 5\" (40.6 cm x 35.6 cm x 12.7 cm)",
+      "Weight limit: 30 lbs (13.6 kg)",
+      "The care instructions on the tearaway label may wash off after cleaning."
     ]
   },
 
@@ -108,23 +108,23 @@ export const mockProduct = [
     id: "3",
     name: "Framed Print",
     images: [
-      "https://images.unsplash.com/photo-1516390118834-21602d501886?q=80&w=2736&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
+      "https://images.unsplash.com/photo-1530634962287-1aa57a5e70fe?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGZyYW1lfGVufDB8fDB8fHww?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
       "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg?auto=compress&cs=tinysrgb&w=600",
       "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=600",
       "https://images.pexels.com/photos/1040424/pexels-photo-1040424.jpeg?auto=compress&cs=tinysrgb&w=600"
     ],
-    price: "12.95",
-    deliveryEstimate: "10–11 days",
-    sizes: ["11 Oz"],
-    technique: "Sublimation",
-    features: ["Eco-friendly", "Premium quality", "Bestseller", "Dishwasher safe", "11oz capacity", "Lead and BPA free"],
-    tags: ["Ceramic", "Glossy"],
+    price: "28.25",
+    deliveryEstimate: "7-10 days",
+    sizes: ["8\"x10\""],
+    technique: "Digital Print",
+    features: ["Premium quality", "Bestseller",],
+    tags: ["Matte", "Lightweight", "Framed"],
     rating: 4.5,
-    reviews: 562,
-    short_description: "Transform your morning routine with personalized warmth",
+    reviews: 181,
+    short_description: "Turn your sentiment into wall art that speaks",
     description:
-      "This sturdy mug is perfect for your morning coffee, afternoon tea, or whatever hot beverage you enjoy. It's glossy white and yields vivid prints that retain their quality when dish-washed and microwaved. Add a graphic of your choice and add this best-seller to your store, so others can enjoy your magical designs too!",
-    colors: ["White"],
+      "A framed, enhanced poster whose museum-quality matte paper will give your design a polished and sophisticated look. What's more, it's already framed and ready to adorn any home or office. Each poster is printed with multicolor, water-based inkjet printing technique that gives you the best possible outcome.",
+    colors: ["Black", "Red Oak", "White"],
     fitInfo: {
       fabricWeight: "308 g/m²",
       fabric: "95% recycled polyester, 5% spandex",
@@ -133,33 +133,31 @@ export const mockProduct = [
       shoulders: "Drop shoulders"
     },
     disclaimers: [
-      "Details from the inner fabric layer may subtly show through.",
-      "This is an expected result of the printing process.",
-      "In case of low fabric stock, we may substitute a similar option."
+      "Place each of the mounting hooks 1 inch (2.5 cm) from frame corners when hanging horizontally."
     ]
   },
 
   {
     id: "4",
-    name: "Postcard Set",
+    name: "Postcards",
     images: [
-      "https://images.unsplash.com/photo-1516390118834-21602d501886?q=80&w=2736&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
+      "https://plus.unsplash.com/premium_photo-1698362819283-8a321d8cf2ab?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8cG9zdGNhcmQlMjBzZXR8ZW58MHx8MHx8fDA%3D?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop",
       "https://images.pexels.com/photos/1040945/pexels-photo-1040945.jpeg?auto=compress&cs=tinysrgb&w=600",
       "https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=600",
       "https://images.pexels.com/photos/1040424/pexels-photo-1040424.jpeg?auto=compress&cs=tinysrgb&w=600"
     ],
-    price: "12.95",
-    deliveryEstimate: "10–11 days",
-    sizes: ["11 Oz"],
-    technique: "Sublimation",
-    features: ["Eco-friendly", "Premium quality", "Bestseller", "Dishwasher safe", "11oz capacity", "Lead and BPA free"],
-    tags: ["Ceramic", "Glossy"],
-    rating: 4.5,
-    reviews: 562,
-    short_description: "Transform your morning routine with personalized warmth",
+    price: "2.25",
+    deliveryEstimate: "14 days",
+    sizes: ["4\"x6\""],
+    technique: "Digital Print",
+    features: ["Premium quality", "Bestseller"],
+    tags: ["No minimums", "Coated"],
+    rating: 4,
+    reviews: 142,
+    short_description: "Share your heart through handwritten notes",
     description:
-      "This sturdy mug is perfect for your morning coffee, afternoon tea, or whatever hot beverage you enjoy. It's glossy white and yields vivid prints that retain their quality when dish-washed and microwaved. Add a graphic of your choice and add this best-seller to your store, so others can enjoy your magical designs too!",
-    colors: ["White"],
+      "These high-quality matte postcards will display your logo or design perfectly. Design one-of-a-kind cards with your best-selling designs to sell separately or as an addition to a purchase. We've trusted our expert fulfillment partners to ensure the high quality your brand is used to. Start with a single postcard or order as many as you like.",
+    colors: [""],
     fitInfo: {
       fabricWeight: "308 g/m²",
       fabric: "95% recycled polyester, 5% spandex",
@@ -168,9 +166,8 @@ export const mockProduct = [
       shoulders: "Drop shoulders"
     },
     disclaimers: [
-      "Details from the inner fabric layer may subtly show through.",
-      "This is an expected result of the printing process.",
-      "In case of low fabric stock, we may substitute a similar option."
+      "In case of low card stock, we might use comparable paper to fulfill the order. The substitute will be as close to the original as possible.",
+      "Due to the different coatings on the front and back of the card, identical colors will look slightly different on the respective surfaces."
     ]
   },
 

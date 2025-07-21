@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import itemsList from '../data/items'
+import { mockProduct } from '../data/mockProduct';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
 import { Heart, Send, ArrowLeft, Save, Sparkles, MessageCircle, Eye, Clock } from 'lucide-react';
@@ -10,13 +10,13 @@ function Build() {
   // get item info
   const location = useLocation();
   const itemId = location.state?.itemId;
-  const item = itemsList.find((anItem) => anItem.id === itemId);
+  const item = mockProduct.find((anItem) => anItem.id === itemId);
 
   if (!item) return <h1>Item not found</h1>
 
   // TEMPORARY: redirect to a checkout page
-  const inputRedirect = (itemId) => {
-    navigate('/input', { state: { itemId: itemId } });
+  const inputRedirect = (itemId, quantity) => {
+    navigate('/checkout', { state: { itemId: itemId, quantity: quantity } });
   };
 
   const [message, setMessage] = useState('');
@@ -215,7 +215,7 @@ function Build() {
               <div className="relative">
                 {/* image of item */}
                 <img
-                  src= { item.image }
+                  src= { item.images }
                   alt= {item.name}
                   className="w-64 h-64 object-cover rounded-2xl shadow-lg"
                 />
