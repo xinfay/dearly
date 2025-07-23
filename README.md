@@ -138,8 +138,8 @@ This provides React components and Stripe.js bindings for secure card handling.
 2. In your `.env` file (for local development), add your **publishable** and **secret** keys:
 
 ```
-VITE_STRIPE_PUBLIC_KEY=pk_test_XXXXXXXXXXXXXXXXXXXXXXXX
-STRIPE_SECRET_KEY=sk_test_XXXXXXXXXXXXXXXXXXXXXXXX
+VITE_STRIPE_PUBLIC_KEY=XXX
+STRIPE_SECRET_KEY=XXX
 ```
 Currently, we are running Stripe with test keys, which only allow for test cards to be validated. You may test different card keys for varying results to further improve security of dearly through:
 https://docs.stripe.com/testing
