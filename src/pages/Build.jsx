@@ -15,8 +15,8 @@ function Build() {
   if (!item) return <h1>Item not found</h1>
 
   // TEMPORARY: redirect to a checkout page
-  const inputRedirect = (itemId, quantity) => {
-    navigate('/checkout', { state: { itemId: itemId, quantity: quantity } });
+  const inputRedirect = (itemId) => {
+    navigate('/checkout', { state: { itemId: itemId} });
   };
 
   const [message, setMessage] = useState('');

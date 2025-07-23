@@ -4,13 +4,12 @@ import { Heart, Lock, Truck, Gift, ArrowLeft, CreditCard, Smartphone, Wallet } f
 import { useLocation } from "react-router-dom";
 import Layout from '../components/Layout';
 import { countryOptions, usStateOptions, caStateOptions } from '../data/countryStateCode';
-import { mockProduct } from '../data/mockProduct'; // Assuming you have a mock product data file
+import { mockProduct } from '../data/mockProduct';
 
 
 function Checkout() {
   const location = useLocation();
   const itemId = location.state?.itemId;
-  const quantity = location.state?.quantity || 1;
   const item = mockProduct.find((anItem) => anItem.id === itemId);
 
   const [currentStep, setCurrentStep] = useState('shipping');
@@ -23,7 +22,7 @@ function Checkout() {
     city: '',
     state: '',
     zipCode: ''
-    // ELSE NEEDED for PRINTFUL FULFILLMENT: quantity, variantId, url
+    // ELSE NEEDED for PRINTFUL FULFILLMENT: variantId, url
   });
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
   const [isGift, setIsGift] = useState(false);
@@ -36,31 +35,57 @@ function Checkout() {
       label: 'Credit or Debit Card',
       icon: <CreditCard className="w-5 h-5" />
     },
-    {
-      id: 'apple_pay',
-      type: 'apple_pay',
-      label: 'Apple Pay',
-      icon: <Smartphone className="w-5 h-5" />
-    },
-    {
-      id: 'google_pay',
-      type: 'google_pay',
-      label: 'Google Pay',
-      icon: <Wallet className="w-5 h-5" />
-    }
+    // {
+    //   id: 'apple_pay',
+    //   type: 'apple_pay',
+    //   label: 'Apple Pay',
+    //   icon: <Smartphone className="w-5 h-5" />
+    // },
+    // {
+    //   id: 'google_pay',
+    //   type: 'google_pay',
+    //   label: 'Google Pay',
+    //   icon: <Wallet className="w-5 h-5" />
+    // }
   ];
 
-  const subtotal = Number(item.price);
-  const shipping = 8.99;
-  const tax = subtotal * 0.13;
-  const total = subtotal + shipping + tax;
+  const [shippingErrors, setShippingErrors] = useState({});
+  const validateShippingInfo = () => {
+    const errors = {};
+    if (!shippingInfo.firstName?.trim()) {
+      errors.firstName = 'First name is required';
+    }
+    if (!shippingInfo.lastName?.trim()) {
+      errors.lastName = 'Last name is required';
+    }
+    if (!shippingInfo.email?.trim()) {
+      errors.email = 'Email is required';
+    }
+    if (!shippingInfo.address?.trim()) {
+      errors.address = 'Address is required';
+    }
+    if (!shippingInfo.city?.trim()) {
+      errors.city = 'City is required';
+    }
+    if (!shippingInfo.state?.trim()) {
+      errors.state = 'State is required';
+    }
+    if (!shippingInfo.zipCode?.trim()) {
+      errors.zipCode = 'Zip code is required';
+    }
+
+    setShippingErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
 
   const handleInputChange = (field, value) => {
     setShippingInfo(prev => ({ ...prev, [field]: value }));
   };
 
   const handleContinueToPayment = () => {
-    setCurrentStep('payment');
+    if (validateShippingInfo()) {
+      setCurrentStep('payment');
+    }
   };
 
   const handleContinueToReview = () => {
@@ -104,6 +129,16 @@ function Checkout() {
       alert("Failed to submit order.");
     }
   };
+
+  const [quantity, setQuantity] = useState(1); // Initialize quantity
+  const incQuantity = () => setQuantity(prev => prev + 1);
+  const decQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1)); // Avoid going below 1
+
+  const subtotal = Number(item.price) * quantity;
+  const shipping = 8.99;
+  const tax = subtotal * 0.13;
+  const total = subtotal + shipping + tax;
+
 
   const renderProgressSteps = () => (
     <div className="flex items-center justify-center mb-8">
@@ -150,25 +185,39 @@ function Checkout() {
       </h3>
       
       {/* STRETCH A CART FUNCTION */}
-      {mockProduct.map((item) => (
-        <div key={item.id} className="flex space-x-4 mb-6">
-          <img
-            src={item.images}
-            alt={item.name}
-            className="w-16 h-16 rounded-lg object-cover"
-          />
-          <div className="flex-1">
-            <h4 className="font-medium text-gray-900">{item.name}</h4>
-            <p className="text-sm text-gray-600 mt-1 leading-relaxed">
-              {item.short_description}
-            </p>
-            <div className="flex justify-between items-center mt-2">
+      <div key={item.id} className="flex space-x-4 mb-6">
+        <img
+          src={item.images}
+          alt={item.name}
+          className="w-16 h-16 rounded-lg object-cover"
+        />
+        <div className="flex-1">
+          <h4 className="font-medium text-gray-900">{item.name}</h4>
+          <p className="text-sm text-gray-600 mt-1 leading-relaxed">
+            {item.short_description}
+          </p>
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center">
               <span className="text-sm text-gray-500">Qty: {quantity}</span>
-              <span className="font-medium text-gray-900">${item.price}</span>
+              <div className="flex border border-gray-300 rounded overflow-hidden ml-2">
+                <button
+                  onClick={decQuantity}
+                  className="w-6 h-6 flex items-center justify-center text-gray-700 hover:bg-gray-100"
+                >
+                  -
+                </button>
+                <button
+                  onClick={incQuantity}
+                  className="w-6 h-6 flex items-center justify-center text-gray-700 hover:bg-gray-100"
+                >
+                  +
+                </button>
+              </div>
             </div>
+            <span className="font-medium text-gray-900">${(item.price * quantity).toFixed(2)}</span>
           </div>
         </div>
-      ))}
+      </div>
 
       <div className="border-t border-rose-200 pt-4 space-y-2">
         <div className="flex justify-between text-sm">
@@ -221,10 +270,15 @@ function Checkout() {
           <input
             type="text"
             value={shippingInfo.firstName}
-            onChange={(e) => handleInputChange('firstName', e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            onChange={(e) => handleInputChange("firstName", e.target.value)}
+            className={`w-full px-4 py-3 border ${
+              shippingErrors.firstName ? "border-red-500" : "border-gray-300"
+            } rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent`}
             placeholder="Enter first name"
           />
+          {shippingErrors.firstName && (
+            <p className="text-red-500 text-sm mt-1">{shippingErrors.firstName}</p>
+          )}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -234,9 +288,14 @@ function Checkout() {
             type="text"
             value={shippingInfo.lastName}
             onChange={(e) => handleInputChange('lastName', e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className={`w-full px-4 py-3 border ${
+              shippingErrors.lastName ? "border-red-500" : "border-gray-300"
+            } rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent`}
             placeholder="Enter last name"
           />
+          {shippingErrors.lastName && (
+            <p className="text-red-500 text-sm mt-1">{shippingErrors.lastName}</p>
+          )}
         </div>
       </div>
 
@@ -248,9 +307,14 @@ function Checkout() {
           type="email"
           value={shippingInfo.email}
           onChange={(e) => handleInputChange('email', e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-          placeholder="Enter email address"
-        />
+            className={`w-full px-4 py-3 border ${
+              shippingErrors.email ? "border-red-500" : "border-gray-300"
+            } rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent`}
+            placeholder="Enter email address"
+          />
+          {shippingErrors.email && (
+            <p className="text-red-500 text-sm mt-1">{shippingErrors.email}</p>
+          )}
       </div>
 
       <div>
@@ -261,9 +325,14 @@ function Checkout() {
           type="text"
           value={shippingInfo.address}
           onChange={(e) => handleInputChange('address', e.target.value)}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-          placeholder="Enter street address"
-        />
+            className={`w-full px-4 py-3 border ${
+              shippingErrors.address ? "border-red-500" : "border-gray-300"
+            } rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent`}
+            placeholder="Enter address"
+          />
+          {shippingErrors.address && (
+            <p className="text-red-500 text-sm mt-1">{shippingErrors.address}</p>
+          )}
       </div>
 
       <div>
@@ -274,9 +343,11 @@ function Checkout() {
           value={shippingInfo.country}
           onChange={(e) => {
             handleInputChange('country', e.target.value);
-            handleInputChange('state', ''); // reset state when country changes
+            handleInputChange('state', ''); // Reset state when country changes
           }}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+          className={`w-full px-4 py-3 border ${
+            shippingErrors.country ? "border-red-500" : "border-gray-300"
+          } rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent`}
         >
           <option value="">Select a country</option>
           {countryOptions.map((country) => (
@@ -285,6 +356,9 @@ function Checkout() {
             </option>
           ))}
         </select>
+        {shippingErrors.country && (
+          <p className="text-red-500 text-sm mt-1">{shippingErrors.country}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -296,9 +370,14 @@ function Checkout() {
             type="text"
             value={shippingInfo.city}
             onChange={(e) => handleInputChange('city', e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className={`w-full px-4 py-3 border ${
+              shippingErrors.city ? "border-red-500" : "border-gray-300"
+            } rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent`}
             placeholder="Enter city"
           />
+          {shippingErrors.city && (
+            <p className="text-red-500 text-sm mt-1">{shippingErrors.city}</p>
+          )}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -308,17 +387,23 @@ function Checkout() {
             value={shippingInfo.state}
             onChange={(e) => handleInputChange('state', e.target.value)}
             disabled={!shippingInfo.country}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className={`w-full px-4 py-3 border ${
+              shippingErrors.state ? 'border-red-500' : 'border-gray-300'
+            } rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent`}
           >
             <option value="">Select a state</option>
-            {(shippingInfo.country === "US" ? usStateOptions :
-              shippingInfo.country === "CA" ? caStateOptions : []
+            {(shippingInfo.country === "US" ? usStateOptions
+              : shippingInfo.country === "CA" ? caStateOptions
+              : []
             ).map((state) => (
               <option key={state.value} value={state.value}>
                 {state.label}
               </option>
             ))}
           </select>
+          {shippingErrors.state && (
+            <p className="text-red-500 text-sm mt-1">{shippingErrors.state}</p>
+          )}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -328,9 +413,14 @@ function Checkout() {
             type="text"
             value={shippingInfo.zipCode}
             onChange={(e) => handleInputChange('zipCode', e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            className={`w-full px-4 py-3 border ${
+              shippingErrors.zipCode ? "border-red-500" : "border-gray-300"
+            } rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent`}
             placeholder="Enter ZIP code"
           />
+          {shippingErrors.zipCode && (
+            <p className="text-red-500 text-sm mt-1">{shippingErrors.zipCode}</p>
+          )}
         </div>
       </div>
 
