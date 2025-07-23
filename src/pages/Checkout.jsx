@@ -5,6 +5,12 @@ import { useLocation } from "react-router-dom";
 import Layout from '../components/Layout';
 import { countryOptions, usStateOptions, caStateOptions } from '../data/countryStateCode';
 import { mockProduct } from '../data/mockProduct';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import GetPayment from '../components/GetPayment';
+
+console.log("Loaded Stripe key:", import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 
 function Checkout() {
@@ -88,9 +94,17 @@ function Checkout() {
     }
   };
 
-  const handleContinueToReview = () => {
-    setCurrentStep('review');
+  const handleContinueToReview = async () => {
+    if (!submitPayment) return;
+
+    const success = await submitPayment();
+    if (success) {
+      setCurrentStep('review');
+    }
   };
+
+  const [isPaymentComplete, setIsPaymentComplete] = useState(false);
+  const [submitPayment, setSubmitPayment] = useState(null);
 
   const handlePlaceOrder = async () => {
     // Here you would integrate with Stripe
@@ -135,6 +149,7 @@ function Checkout() {
   const decQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1)); // Avoid going below 1
 
   const subtotal = Number(item.price) * quantity;
+  // TO BE CHANGED: shipping and tax should be calculated based on the item, amount and location
   const shipping = 8.99;
   const tax = subtotal * 0.13;
   const total = subtotal + shipping + tax;
@@ -502,40 +517,16 @@ function Checkout() {
       </div>
 
       {selectedPaymentMethod === 'card' && (
-        <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Card Number
-            </label>
-            <input
-              type="text"
-              placeholder="1234 5678 9012 3456"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Expiry Date
-              </label>
-              <input
-                type="text"
-                placeholder="MM/YY"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                CVC
-              </label>
-              <input
-                type="text"
-                placeholder="123"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-              />
-            </div>
-          </div>
-        </div>
+        <Elements stripe={stripePromise}>
+          <GetPayment
+            onPaymentComplete={(paymentMethod) => {
+              console.log('Payment method created:', paymentMethod.id);
+              setIsPaymentComplete(true);
+            }}
+            setIsPaymentComplete={setIsPaymentComplete}
+            setSubmitPayment={setSubmitPayment}
+          />
+        </Elements>
       )}
 
       <div className="flex space-x-4">
@@ -548,7 +539,12 @@ function Checkout() {
         </button>
         <button
           onClick={handleContinueToReview}
-          className="flex-1 bg-rose-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-rose-600 transition-colors duration-200"
+          disabled={!isPaymentComplete}
+          className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-colors duration-200 ${
+            isPaymentComplete
+              ? 'bg-rose-500 text-white hover:bg-rose-600'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
         >
           Review Order
         </button>

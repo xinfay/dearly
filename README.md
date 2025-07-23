@@ -117,6 +117,35 @@ This starts the Vite development server. Open the provided local URL (typically 
 Locally, you should just run http://localhost:5173. Fulfilling an order via Input will submit an order to the Printful API.
 Likewise, run Ctrl+C to terminate the process.
 
+## 💳 Stripe Integration
+
+This project uses **Stripe Elements** to securely and compliantly collect credit card payments on the frontend. Stripe Elements ensures PCI compliance by rendering secure, hosted iframes for card inputs.
+
+## 🔌 Installing Stripe
+
+In your `frontend/` directory, install the Stripe libraries:
+
+```bash
+npm install @stripe/react-stripe-js @stripe/stripe-js
+```
+
+This provides React components and Stripe.js bindings for secure card handling.
+
+
+### 🔑 Stripe Keys
+
+1. Go to [https://dashboard.stripe.com](https://dashboard.stripe.com) and create a new project (or use an existing one).
+2. In your `.env` file (for local development), add your **publishable** and **secret** keys:
+
+```
+VITE_STRIPE_PUBLIC_KEY=pk_test_XXXXXXXXXXXXXXXXXXXXXXXX
+STRIPE_SECRET_KEY=sk_test_XXXXXXXXXXXXXXXXXXXXXXXX
+```
+Currently, we are running Stripe with test keys, which only allow for test cards to be validated. You may test different card keys for varying results to further improve security of dearly through:
+https://docs.stripe.com/testing
+
+> ⚠️ **Only the public key is used in the frontend.** The secret key should only be accessed on the backend.
+
 
 ## ✅ Notes
 
@@ -133,3 +162,7 @@ Likewise, run Ctrl+C to terminate the process.
 - Improve error handling and validation in API
 - Setup automated tests for backend and frontend
 - Dockerize backend for easy deployment
+- Backend Payment Flow (Future) - The backend includes a placeholder script `confirm_order.py` intended to:
+    - Receive the `paymentMethod.id` from the frontend
+    - Confirm the payment using Stripe’s Python SDK
+    - Fulfill the order on success
