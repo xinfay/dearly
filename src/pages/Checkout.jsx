@@ -27,12 +27,15 @@ function Checkout() {
     country: '',
     city: '',
     state: '',
-    zipCode: ''
+    zipCode: '',
     // ELSE NEEDED for PRINTFUL FULFILLMENT: variantId, url
+    variantId: '22755',    // remove later
+    url: 'https://static.wikia.nocookie.net/cartoons/images/e/ed/Profile_-_SpongeBob_SquarePants.png/revision/latest?cb=20240420115914',          // remove later
   });
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
   const [isGift, setIsGift] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
+  const [orderStatus, setOrderStatus] = useState(null); // 'success' | 'error' | null
 
   const paymentMethods = [
     {
@@ -119,9 +122,21 @@ function Checkout() {
 
     console.log("Sending to Printful API");
 
+    const printfulOrder = {
+      name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
+      address: shippingInfo.address,
+      quantity: quantity || 1,
+      variantId: parseInt(shippingInfo.variantId),
+      city: shippingInfo.city,
+      statecode: shippingInfo.state,
+      countrycode: shippingInfo.country,
+      zip: shippingInfo.zipCode,
+      url: shippingInfo.url
+    };
+
     try {
       const payload = {
-        ...form,
+        ...printfulOrder,
         productId: itemId,
       };
       console.log("Sending payload:", payload);
@@ -135,6 +150,11 @@ function Checkout() {
       console.log("Fetch finished:", response);
       const result = await response.json();
       console.log("✅ Order response:", result);
+      if (result.code === 200) {
+        setOrderStatus('success');
+      } else if (result.code === 400) {
+        setOrderStatus('error');
+      }
 
       // Output the result to alert
       // alert("Order submitted: " + JSON.stringify(result));
@@ -599,6 +619,35 @@ function Checkout() {
         </div>
       </div>
 
+
+       {/* TO BE CHANGED: this is a test form for Printful fulfillment */}
+      <div className="bg-white rounded-lg p-4 border border-gray-200 space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Printful Variant ID (test)
+          </label>
+          <input
+            type="text"
+            value={shippingInfo.variantId}
+            onChange={(e) => handleInputChange('variantId', e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            placeholder="eg. 22755"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Image URL (test)
+          </label>
+          <input
+            type="text"
+            value={shippingInfo.url}
+            onChange={(e) => handleInputChange('url', e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+            placeholder="https://..."
+          />
+        </div>
+      </div>
+
       <div className="flex space-x-4">
         <button
           onClick={() => setCurrentStep('payment')}
@@ -667,6 +716,27 @@ function Checkout() {
           </div>
         </footer>
       </div>
+
+      {orderStatus && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-xl text-center w-full max-w-md">
+            <h2 className="text-2xl font-semibold mb-4">
+              {orderStatus === 'success' ? '🎉 Order Successful!' : '❌ Order Failed'}
+            </h2>
+            <p className="text-gray-700 mb-6">
+              {orderStatus === 'success'
+                ? 'Thank you for your purchase! A confirmation email will be sent shortly.'
+                : 'There was an issue processing your order. Please try again or contact support.'}
+            </p>
+            <button
+              onClick={() => setOrderStatus(null)}
+              className="bg-rose-500 text-white px-6 py-2 rounded-lg hover:bg-rose-600 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 
