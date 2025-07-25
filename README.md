@@ -31,6 +31,17 @@ dearly/
 │   │   │   ├── mockProduct.jsx          # actual set of item data and mock review to implement
 │   │   │   └── testimonials.jsx         # meta reviews on frontpage
 │   │   └── components/
+│   │       ├── checkout/
+│   │       │   ├── config/
+│   │       │   │   └── PaymentMethods.js
+│   │       │   ├── hooks/
+│   │       │   │   └── useCheckout.js
+│   │       │   ├── steps/
+│   │       │   │   └── CheckoutSteps.jsx
+│   │       │   ├── utils/
+│   │       │   │   └── printful.js
+│   │       │   ├── OrderSummary.jsx
+│   │       │   └── ProgressSteps.jsx
 │   │       ├── Header.jsx               # coupled with Layout.jsx to present navbar
 │   │       ├── Layout.jsx               # called as like <entity> to present navbar
 │   │       ├── imageGallery.jsx         # manages profile formatting for testimonials on frontpage
@@ -43,7 +54,7 @@ dearly/
 
 Under the .env file, you shouldinput your own Prinftul API key, which you may create from the Printful Developper platform
 at https://developers.printful.com/. When creating your key, the access level you configure should only be to one store - this avoids conflict with pushing the same order to multiple stores.
-
+it
 
 ## 📦 Requirements & Dependencies
 

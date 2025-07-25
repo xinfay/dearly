@@ -8,6 +8,7 @@ import { mockProduct } from '../data/mockProduct';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import GetPayment from '../components/GetPayment';
+import { useNavigate } from 'react-router-dom';
 
 console.log("Loaded Stripe key:", import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
@@ -15,6 +16,8 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 function Checkout() {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const itemId = location.state?.itemId;
   const item = mockProduct.find((anItem) => anItem.id === itemId);
 
@@ -679,6 +682,13 @@ function Checkout() {
     }
   };
 
+  const handleClosePopup = () => {
+    if (orderStatus === 'success') {
+      navigate('/');
+    }
+    setOrderStatus(null);
+  };
+
   return (
     <Layout>
       <div className="min-h-screen bg-white">
@@ -729,7 +739,7 @@ function Checkout() {
                 : 'There was an issue processing your order. Please try again or contact support.'}
             </p>
             <button
-              onClick={() => setOrderStatus(null)}
+              onClick={handleClosePopup}
               className="bg-rose-500 text-white px-6 py-2 rounded-lg hover:bg-rose-600 transition-colors"
             >
               Close
