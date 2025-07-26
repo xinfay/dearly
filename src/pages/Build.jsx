@@ -20,63 +20,125 @@ function Build() {
   };
 
   const [message, setMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  // AI 'typing'
+  const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: 1,
-      type: 'ai',
-      content: "Hi there! I'm here to help you turn your story into a special gift. What would you like to express, and who is this beautiful mug for?",
+      type: 'assistant',
+      content: "Hi there! I'm here to help you turn your story into a special gift. What would you like to express in your design?",
       timestamp: new Date()
     }
   ]);
+  const [generatedImageUrl, setGeneratedImageUrl] = useState(null);
 
   const navigate = useNavigate()
 
-  const handleSendMessage = () => {
-    if (message.trim()) {
-      const newMessage = {
-        // increment message id
-        id: messages.length + 1,
-        type: 'user',
-        content: message,
+  // Add message to chat
+  const addMessage = (content, sender) => {
+    setMessages(prev => [
+      ...prev,
+      {
+        id: prev.length + 1,
+        type: sender,
+        content,
         timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, newMessage]);
-      setMessage('');
-      setIsTyping(true);
-      
-      // Simulate AI response
-      setTimeout(() => {
-        const aiResponse = {
-          id: messages.length + 2,
-          type: 'ai',
-          content: "That sounds wonderful! I can feel the love in your words. Let me help you craft something beautiful that captures that sentiment perfectly.",
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, aiResponse]);
-        setIsTyping(false);
-      }, 2000);
+      }
+    ]);
+  };
+
+  // Add loading message
+  const addLoadingMessage = () => {
+    setMessages(prev => [
+      ...prev,
+      {
+        id: prev.length + 1,
+        type: 'assistant',
+        content: '__loading__',
+        timestamp: new Date()
+      }
+    ]);
+  };
+
+  // Remove loading message
+  const removeLoadingMessage = () => {
+    setMessages(prev => prev.filter(msg => msg.content !== '__loading__'));
+  };
+
+  const handleSendMessage = async () => {
+    if (!message.trim() || isLoading) return;
+    addMessage(message, 'user');
+    setMessage('');
+    setIsLoading(true);
+    addLoadingMessage();
+    try {
+      const response = await fetch('http://localhost:8004/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (err) {
+        removeLoadingMessage();
+        addMessage(`Error: Failed to parse response.`, 'assistant');
+        setIsLoading(false);
+        return;
+      }
+      removeLoadingMessage();
+      if (response.ok && data && data.response) {
+        // If backend returns an array of messages, handle each
+        const responses = Array.isArray(data.response) ? data.response : [data.response];
+        responses.forEach((msg) => {
+          if (!msg || (typeof msg === 'string' && msg.trim() === '')) return; // Skip blank/null/undefined
+          if (typeof msg === 'string' && msg.includes('[Image generated: output.png]')) {
+            const imageUrl = `http://localhost:8004/image?ts=${Date.now()}`;
+            setGeneratedImageUrl(imageUrl);
+            addMessage(
+              <img
+                src={imageUrl}
+                alt="Generated Image"
+                style={{ maxWidth: "100%", borderRadius: "8px" }}
+              />,
+              'assistant'
+            );
+          } else {
+            addMessage(msg, 'assistant');
+          }
+        });
+      } else {
+        addMessage(`Error: ${data?.response || 'Failed to get response'}`, 'assistant');
+      }
+    } catch (error) {
+      removeLoadingMessage();
+      addMessage(`Error: ${error.message}`, 'assistant');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // reference to bottom of chat
   const messagesEndRef = useRef(null);
 
-  //scrolls to bottom of chat when called
-  const scrollToBottom = () => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  // scrolls to bottom every time messages change
+  // Auto-resize textarea
   useEffect(() => {
-    scrollToBottom();
+    const textarea = document.getElementById('reactMessageInput');
+    if (!textarea) return;
+    const handleInput = function() {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    };
+    textarea.addEventListener('input', handleInput);
+    return () => textarea.removeEventListener('input', handleInput);
+  }, []);
+
+  // Scroll to bottom every time messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
 
-  const handleKeyPress = (e) => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
@@ -86,7 +148,7 @@ function Build() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-purple-50">
+      <div className="min-h-[110vh] bg-gradient-to-br from-rose-50 via-white to-purple-50">
         {/* Header */}
         <header className="bg-white/80 backdrop-blur-sm border-b border-rose-100 px-6 py-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -140,53 +202,44 @@ function Build() {
               </div>
               
               {/* Chat Messages */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              <div className="p-6 space-y-4" style={{ height: '350px', overflowY: 'auto' }}>
                 {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div
-                      className={`max-w-[80%] p-4 rounded-2xl ${
-                        msg.type === 'user'
-                          ? 'bg-gradient-to-r from-rose-400 to-pink-500 text-white'
-                          : 'bg-gray-50 text-gray-800 border border-gray-100'
-                      }`}
-                    >
-                      <p className="text-sm leading-relaxed">{msg.content}</p>
-                    </div>
-                  </div>
-                ))}
-                
-                {/* Typing Indicator */}
-                {isTyping && (
-                  <div className="flex justify-start">
-                    <div className="bg-gray-50 border border-gray-100 p-4 rounded-2xl">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  msg.content === '__loading__' ? (
+                    <div key={msg.id} className="flex justify-start">
+                      <div className="message-content bg-gray-50 border border-gray-100 p-4 rounded-2xl flex items-center gap-2">
+                        <span className="inline-block w-4 h-4 border-2 border-rose-200 border-t-rose-400 rounded-full animate-spin mr-2"></span>
+                        <span style={{ color: '#be185d', fontWeight: 500 }}>Assistant is thinking...</span>
                       </div>
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    <div
+                      key={msg.id}
+                      className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div className={`message-content max-w-[80%] p-4 rounded-2xl ${msg.type === 'user' ? 'bg-gradient-to-r from-rose-400 to-pink-500 text-white' : 'bg-gray-50 text-gray-800 border border-gray-100'}`}>
+                        {typeof msg.content === 'string' ? msg.content : msg.content}
+                      </div>
+                    </div>
+                  )
+                ))}
                 <div ref={messagesEndRef} />
               </div>
-              
               {/* Message Input */}
               <div className="p-6 border-t border-rose-50">
                 <div className="flex space-x-3">
                   <textarea
+                    id="reactMessageInput"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder="Share what's in your heart..."
+                    onKeyDown={handleKeyDown}
+                    placeholder="Turn your ideas into designs..."
                     className="flex-1 resize-none border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-rose-300 focus:border-transparent"
-                    rows={2}
+                    rows={1}
+                    disabled={isLoading}
                   />
                   <button
                     onClick={handleSendMessage}
-                    disabled={!message.trim()}
+                    disabled={!message.trim() || isLoading}
                     className="bg-gradient-to-r from-rose-400 to-pink-500 text-white p-3 rounded-xl hover:from-rose-500 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   >
                     <Send className="w-5 h-5" />
@@ -243,20 +296,30 @@ function Build() {
               
               <div className="flex-1 flex flex-col items-center justify-center">
                 <div className="w-full h-80 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-                  <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-purple-100 rounded-full flex items-center justify-center mb-4">
-                    <Heart className="w-8 h-8 text-rose-400" />
-                  </div>
-                  <h3 className="text-lg font-playfair font-medium text-gray-600 mb-2">
-                    Preview will appear here soon...
-                  </h3>
-                  <p className="text-sm text-gray-500 text-center max-w-xs leading-relaxed">
-                    Once we've chatted a bit, we'll show your unique creation taking shape
-                  </p>
+                  {generatedImageUrl ? (
+                    <img
+                      src={generatedImageUrl}
+                      alt="Live Preview"
+                      style={{ maxWidth: "90%", maxHeight: "90%", borderRadius: "16px", boxShadow: "0 2px 16px rgba(0,0,0,0.08)" }}
+                    />
+                  ) : (
+                    <>
+                      <div className="w-16 h-16 bg-gradient-to-br from-rose-100 to-purple-100 rounded-full flex items-center justify-center mb-4">
+                        <Heart className="w-8 h-8 text-rose-400" />
+                      </div>
+                      <h3 className="text-lg font-playfair font-medium text-gray-600 mb-2">
+                        Preview will appear here soon...
+                      </h3>
+                      <p className="text-sm text-gray-500 text-center max-w-xs leading-relaxed">
+                        Once we've chatted a bit, we'll show your unique creation taking shape.
+                      </p>
+                    </>
+                  )}
                 </div>
                 
                 <div className="mt-6 p-4 bg-rose-50 rounded-xl border border-rose-100 w-full">
                   <p className="text-sm text-rose-700 text-center">
-                    <strong>Magic in progress:</strong> Your words are being transformed into a beautiful, personalized design
+                    <strong>Magic in progress:</strong> Your words are being transformed into a beautiful, personalized design.
                   </p>
                 </div>
               </div>
