@@ -21,11 +21,12 @@ function Build() {
 
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  // Initialize chat with product context (assistant only)
   const [messages, setMessages] = useState([
     {
       id: 1,
       type: 'assistant',
-      content: "Hi there! I'm here to help you turn your story into a special gift. What would you like to express in your design?",
+      content: `Hi there! I'm here to help you turn your story into a special gift. What would you like to express in your design? (Product: ${item?.name || 'your product'})`,
       timestamp: new Date()
     }
   ]);
@@ -71,10 +72,12 @@ function Build() {
     setIsLoading(true);
     addLoadingMessage();
     try {
+      // Always send product name as context in every message
+      const context = `The product is: ${item?.name || 'Unknown Product'}`;
       const response = await fetch('http://localhost:8004/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message })
+        body: JSON.stringify({ message: `${context}\n${message}` })
       });
       let data = null;
       try {

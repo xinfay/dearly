@@ -115,12 +115,12 @@ Or run Ctrl+C to terminate the process.
 
 ### 2. Backend API (OpenAPI)
 
-To configure the server, go to server.py in the server folder. On line 26, replace both instances of 5176 with the port you are running the app on and save these changes.
+To configure the server, go to server.py in the server folder. On line 26, replace both instances of the port number you are running the app on and save these changes.
 
 From the root directory (dearly), run the following command to start the server for OpenAI:
 
 ```bash
-uvicorn dearly_agent.server.server:app --host 127.0.0.1 --port 8004 --reload
+python -m uvicorn dearly_agent.server.server:app --host 127.0.0.1 --port 8004 --reload
 ```
 
 
