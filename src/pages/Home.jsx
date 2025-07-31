@@ -47,81 +47,107 @@ function Home() {
           }}
         />
 
+        <p className="text-sm uppercase tracking-wider text-rose-400 mb-2">Your Feelings. Our Craft.</p>
+
         <div className="w-full max-w-6xl mx-auto text-center relative z-10">
-          <div className="mb-8 flex items-center justify-center">
-            <Heart className="w-12 h-12 text-rose-400 mr-4" />
-            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-playfair font-bold text-gray-800 tracking-tight">
+          <div className="flex items-center justify-center gap-3 sm:gap-4 mb-2">
+            <Heart className="w-8 h-8 text-rose-400" />
+            <h1 className="text-6xl sm:text-7xl md:text-8xl font-playfair font-bold text-gray-800 tracking-tight">
               Dearly
             </h1>
           </div>
 
-          <p className="text-xl sm:text-2xl md:text-3xl font-playfair text-gray-600 mb-8 leading-relaxed">
+          <h2 className="text-2xl sm:text-3xl text-gray-700 font-medium mt-4 mb-6">
             Say it dearly. Gift it truly.
-          </p>
+          </h2>
 
-          <p className="text-base sm:text-lg md:text-xl text-gray-500 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Create heartfelt, personalized gifts with AI that understands your intentions.
-            Your feelings, enhanced by intelligence, crafted into something truly special.
+          <p className="text-lg sm:text-xl text-gray-600 mb-10 sm:mb-12 max-w-3xl mx-auto leading-relaxed">
+            Create heartfelt, personalized gifts with AI that understands your intentions. <br className="hidden sm:inline" />
+            Your feelings, enhanced by intelligence, crafted into something truly special —<br className="hidden sm:inline" />
+            words, design, and gift, all in one.
           </p>
 
           <button 
             onClick={scrollToGifts}
-            className="bg-gradient-to-r from-rose-400 to-pink-500 text-white px-10 py-3 sm:px-12 sm:py-4 rounded-full text-base sm:text-lg font-medium hover:from-rose-500 hover:to-pink-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="bg-gradient-to-r from-rose-400 to-pink-500 text-white px-10 py-4 rounded-full text-lg font-semibold hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
           >
             Make It Special
           </button>
         </div>
+        
+        {/* Background Sparkles - Hero */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <div className="absolute w-[25%] h-[25%] bg-pink-200 rounded-full opacity-30 blur-3xl top-[5%] left-[10%] animate-pulse" />
+          <div className="absolute w-[15%] h-[15%] bg-rose-300 rounded-full opacity-25 blur-2xl top-[35%] right-[10%] animate-pulse" />
+          <div className="absolute w-[18%] h-[25%] bg-rose-300 rounded-full opacity-30 blur-2xl top-[20%] right-[70%] animate-pulse" />
+          <div className="absolute w-[22%] h-[22%] bg-yellow-200 rounded-full opacity-15 blur-3xl bottom-[5%] left-[25%] animate-pulse" />
+          <div className="absolute w-[20%] h-[20%] bg-yellow-200 rounded-full opacity-20 blur-3xl bottom-[15%] right-[15%] animate-pulse" />
+          <div className="absolute w-[22%] h-[22%] bg-pink-300 opacity-35 rounded-full blur-3xl top-[5%] left-[45%] animate-pulse" />
+        </div>
       </section>
 
-
       {/* How It Works Section */}
-      <section className="w-full py-24 px-4 md:px-6 bg-white/80 backdrop-blur-sm">
-        <div className="w-full max-w-6xl mx-auto">
+      <section className="w-full py-24 px-4 md:px-6 bg-gradient-to-br from-yellow-100 via-rose-50 to-pink-100 bg-opacity-60 backdrop-blur-lg relative overflow-hidden">
+
+        {/* Background Sparkles */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <div className="absolute w-72 h-72 bg-pink-200 rounded-full opacity-30 blur-3xl top-[-3rem] left-[10%]" />
+          <div className="absolute w-56 h-56 bg-rose-300 rounded-full opacity-20 blur-2xl top-[30%] right-[10%]" />
+          <div className="absolute w-64 h-64 bg-yellow-200 rounded-full opacity-25 blur-3xl bottom-[-4rem] left-[35%]" />
+        </div>
+
+        <div className="w-full max-w-6xl mx-auto relative z-10">
           <h2 className="text-4xl sm:text-5xl font-playfair font-bold text-center text-gray-800 mb-20">
             How Dearly Works
           </h2>
 
           <div className="grid gap-12 md:grid-cols-3">
             {/* Step 1 */}
-            <div className="text-center group">
-              <div className="w-24 h-24 bg-gradient-to-br from-rose-100 to-pink-200 rounded-full flex items-center justify-center mx-auto mb-8 transform group-hover:scale-110 transition-transform duration-300">
-                <Sparkles className="w-12 h-12 text-rose-600" />
+            <div className="text-center group px-10 py-14 sm:px-12 sm:py-16 bg-white/30 rounded-3xl shadow-lg border border-white/20 backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
+              <div className="text-center group">
+                <div className="w-24 h-24 bg-gradient-to-br from-rose-100 to-pink-200 rounded-full flex items-center justify-center mx-auto mb-8 transform group-hover:scale-110 group-hover:shadow-xl transition-all duration-300">
+                  <Sparkles className="w-12 h-12 text-rose-600" />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-playfair font-semibold text-gray-800 mb-4">
+                  Share your intentions
+                </h3>
+                <p className="text-gray-600 leading-relaxed text-base sm:text-lg">
+                  Describe what you want to say, and who it's for. Share the feeling, 
+                  the memory, or the message you want to convey.
+                </p>
               </div>
-              <h3 className="text-xl sm:text-2xl font-playfair font-semibold text-gray-800 mb-4">
-                Share your intentions
-              </h3>
-              <p className="text-gray-600 leading-relaxed text-base sm:text-lg">
-                Describe what you want to say, and who it's for. Share the feeling, 
-                the memory, or the message you want to convey.
-              </p>
             </div>
 
             {/* Step 2 */}
-            <div className="text-center group">
-              <div className="w-24 h-24 bg-gradient-to-br from-purple-100 to-indigo-200 rounded-full flex items-center justify-center mx-auto mb-8 transform group-hover:scale-110 transition-transform duration-300">
-                <Brain className="w-12 h-12 text-purple-600" />
+            <div className="text-center group px-10 py-14 sm:px-12 sm:py-16 bg-white/30 rounded-3xl shadow-lg border border-white/20 backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
+              <div className="text-center group">
+                <div className="w-24 h-24 bg-gradient-to-br from-purple-100 to-indigo-200 rounded-full flex items-center justify-center mx-auto mb-8 transform group-hover:scale-110 group-hover:shadow-xl transition-all duration-300">
+                  <Brain className="w-12 h-12 text-purple-600" />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-playfair font-semibold text-gray-800 mb-4">
+                  Let AI assist your magic
+                </h3>
+                <p className="text-gray-600 leading-relaxed text-base sm:text-lg">
+                  We help turn your idea into a design-worthy gift. AI enhances your creativity, 
+                  never replacing your personal touch.
+                </p>
               </div>
-              <h3 className="text-xl sm:text-2xl font-playfair font-semibold text-gray-800 mb-4">
-                Let AI assist your magic
-              </h3>
-              <p className="text-gray-600 leading-relaxed text-base sm:text-lg">
-                We help turn your idea into a design-worthy gift. AI enhances your creativity, 
-                never replacing your personal touch.
-              </p>
             </div>
 
             {/* Step 3 */}
-            <div className="text-center group">
-              <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-orange-200 rounded-full flex items-center justify-center mx-auto mb-8 transform group-hover:scale-110 transition-transform duration-300">
-                <Gift className="w-12 h-12 text-amber-600" />
+            <div className="text-center group px-10 py-14 sm:px-12 sm:py-16 bg-white/30 rounded-3xl shadow-lg border border-white/20 backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:scale-[1.01]">
+              <div className="text-center group">
+                <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-orange-200 rounded-full flex items-center justify-center mx-auto mb-8 transform group-hover:scale-110 group-hover:shadow-xl transition-all duration-300">
+                  <Gift className="w-12 h-12 text-amber-600" />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-playfair font-semibold text-gray-800 mb-4">
+                  Customize & send
+                </h3>
+                <p className="text-gray-600 leading-relaxed text-base sm:text-lg">
+                  Apply your creation to a gift and make it real. Every detail 
+                  reflects your intention, ready to touch hearts.
+                </p>
               </div>
-              <h3 className="text-xl sm:text-2xl font-playfair font-semibold text-gray-800 mb-4">
-                Customize & send
-              </h3>
-              <p className="text-gray-600 leading-relaxed text-base sm:text-lg">
-                Apply your creation to a gift and make it real. Every detail 
-                reflects your intention, ready to touch hearts.
-              </p>
             </div>
           </div>
         </div>
@@ -129,8 +155,15 @@ function Home() {
 
 
       {/* Featured Gift Items */}
-      <section id="gifts" className="w-full py-24 px-4 md:px-6 bg-gradient-to-br from-purple-50 via-white to-rose-50">
-        <div className="w-full max-w-6xl mx-auto">
+      <section id="gifts" className="relative w-full py-24 px-4 md:px-6 bg-gradient-to-br from-purple-50 via-white to-rose-50 overflow-hidden">
+
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <div className="absolute w-[15%] h-[15%] bg-yellow-100 opacity-30 blur-3xl top-[5%] left-[5%] animate-pulse" />
+          <div className="absolute w-[13%] h-[13%] bg-rose-300 opacity-20 blur-2xl top-[30%] right-[8%] animate-pulse" />
+          <div className="absolute w-[16%] h-[16%] bg-pink-300 opacity-20 blur-3xl bottom-[2%] left-[40%] animate-pulse" />
+        </div>
+
+        <div className="relative z-10 w-full max-w-6xl mx-auto">
           <h2 className="text-4xl sm:text-5xl font-playfair font-bold text-center text-gray-800 mb-20">
             Choose a gift to personalize
           </h2>
@@ -159,8 +192,9 @@ function Home() {
                   <p className="text-gray-600 mb-6 leading-relaxed text-base sm:text-lg">
                     {item.short_description}
                   </p>
-                  <button className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white py-3 px-6 rounded-xl font-medium hover:from-rose-500 hover:to-pink-600 transition-all duration-300 transform hover:scale-105"
-                          onClick={() => viewRedirect(item.id)}
+                  <button
+                    className="w-full bg-gradient-to-r from-rose-400 to-pink-500 text-white py-3 px-6 rounded-xl font-medium hover:from-rose-500 hover:to-pink-600 transition-all duration-300 transform hover:scale-105"
+                    onClick={() => viewRedirect(item.id)}
                   >
                     Gift the Feeling
                   </button>
@@ -173,79 +207,67 @@ function Home() {
 
 
       {/* Customer Quotes */}
-      <section className="w-full py-24 px-4 md:px-6 bg-white/90 backdrop-blur-sm">
-        <div className="w-full max-w-6xl mx-auto">
-          <h2 className="text-4xl sm:text-5xl font-playfair font-bold text-center text-gray-800 mb-20">
+      <section className="relative w-full py-24 px-4 md:px-6 bg-gradient-to-b from-[#2e2e38] via-[#3b3641] to-[#44364c] text-white overflow-hidden">
+
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <div className="absolute w-[18%] h-[18%] bg-yellow-200 opacity-35 blur-3xl top-[5%] left-[10%] animate-pulse" />
+          <div className="absolute w-[15%] h-[15%] bg-rose-400 opacity-20 blur-3xl top-[30%] right-[8%] animate-pulse" />
+          <div className="absolute w-[20%] h-[20%] bg-purple-400 opacity-15 blur-3xl bottom-[0%] left-[40%] animate-pulse" />
+        </div>
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto">
+          <h2 className="text-4xl sm:text-5xl font-playfair font-bold text-center text-white mb-20">
             What our clients are saying
           </h2>
-
-          <div className="relative w-full max-w-4xl mx-auto">
-            {/* Arrows and card container */}
-            <div className="relative flex items-center justify-center">
-              {/* Left Arrow */}
-              <button
-                onClick={prevQuote}
-                className="absolute left-4 sm:left-0 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow duration-300"
-              >
-                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-              </button>
-
-              {/* Quote card */}
-              <div className="w-full px-6 sm:px-8 md:px-12">
-                <div className="bg-gradient-to-br from-rose-50 to-purple-50 rounded-2xl p-6 sm:p-8 shadow-lg">
-                  <div className="flex items-center justify-center mb-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                      <img
-                        src = {quotes[currentQuote].image}
-                        alt = {quotes[currentQuote].avatar}
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                    </div>
+            <div className="relative w-full overflow-hidden">
+              <div className="absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#2e2e38] to-transparent z-10 pointer-events-none" />
+              <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#2e2e38] to-transparent z-10 pointer-events-none" />
+              
+              <div className="flex animate-marquee gap-16 w-max px-6">
+                {[...quotes, ...quotes].map((quote, index) => (
+                <div
+                  key={index}
+                  className="bg-gradient-to-br from-white/80 to-rose-100/80 text-gray-800 rounded-3xl p-8 sm:p-10 shadow-xl w-[520px] flex-shrink-0 break-words"
+                >
+                  <div className="flex justify-center mb-6">
+                    <img
+                      src={quote.image}
+                      alt={quote.avatar}
+                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover shadow-md"
+                    />
                   </div>
-                  <blockquote className="text-base sm:text-lg text-gray-700 leading-relaxed text-center mb-6 italic">
-                    "{quotes[currentQuote].quote}"
+                  <blockquote className="italic text-lg sm:text-xl leading-relaxed text-center mb-6">
+                    “{quote.quote}”
                   </blockquote>
-                  <p className="text-center font-medium text-gray-800">
-                    — {quotes[currentQuote].author}
+                  <p className="text-center font-semibold text-base sm:text-lg text-gray-700">
+                    — {quote.author}
                   </p>
                 </div>
+                ))}
               </div>
-
-              {/* Right Arrow */}
-              <button
-                onClick={nextQuote}
-                className="absolute right-4 sm:right-0 z-10 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-shadow duration-300"
-              >
-                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
-              </button>
             </div>
 
-            <div className="flex justify-center mt-8 space-x-2">
-              {quotes.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentQuote(index)}
-                  className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-                    index === currentQuote ? 'bg-rose-400' : 'bg-gray-300'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
 
       {/* Quick Stats */}
-      <section className="w-full py-24 px-4 md:px-6 bg-gradient-to-br from-amber-50 via-white to-rose-50">
-        <div className="w-full max-w-6xl mx-auto">
+      <section className="relative w-full py-24 px-4 md:px-6 bg-[#e8e3f3] overflow-hidden">
+
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <div className="absolute w-[20%] h-[20%] bg-yellow-100 opacity-10 blur-3xl top-[50%] left-[30%] animate-pulse" />
+          <div className="absolute w-[18%] h-[18%] bg-rose-300 opacity-10 blur-3xl top-[20%] right-[15%] animate-pulse" />
+          <div className="absolute w-[25%] h-[25%] bg-purple-300 opacity-10 blur-3xl bottom-[5%] left-[55%] animate-pulse" />
+        </div>
+
+        <div className="relative z-10 w-full max-w-6xl mx-auto">
           <h2 className="text-4xl sm:text-5xl font-playfair font-bold text-center text-gray-800 mb-20">
             Why Dearly?
           </h2>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {/* Stat 1 */}
-            <div className="text-center p-6 sm:p-8 bg-white/80 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="text-center p-6 sm:p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-lg transition duration-300">
               <Clock className="w-14 h-14 sm:w-16 sm:h-16 text-amber-500 mx-auto mb-4" />
               <p className="text-gray-800 font-medium leading-relaxed text-base sm:text-lg">
                 Create a personalized design in under 3 minutes
@@ -253,7 +275,7 @@ function Home() {
             </div>
 
             {/* Stat 2 */}
-            <div className="text-center p-6 sm:p-8 bg-white/80 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="text-center p-6 sm:p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-lg transition duration-300">
               <Package className="w-14 h-14 sm:w-16 sm:h-16 text-rose-500 mx-auto mb-4" />
               <p className="text-gray-800 font-medium leading-relaxed text-base sm:text-lg">
                 11,000+ gifts shipped and loved
@@ -261,7 +283,7 @@ function Home() {
             </div>
 
             {/* Stat 3 */}
-            <div className="text-center p-6 sm:p-8 bg-white/80 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="text-center p-6 sm:p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-lg transition duration-300">
               <Star className="w-14 h-14 sm:w-16 sm:h-16 text-purple-500 mx-auto mb-4" />
               <p className="text-gray-800 font-medium leading-relaxed text-base sm:text-lg">
                 98% of users say it helped them express what they truly feel
@@ -269,7 +291,7 @@ function Home() {
             </div>
 
             {/* Stat 4 */}
-            <div className="text-center p-6 sm:p-8 bg-white/80 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="text-center p-6 sm:p-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-md hover:shadow-lg transition duration-300">
               <Users className="w-14 h-14 sm:w-16 sm:h-16 text-indigo-500 mx-auto mb-4" />
               <p className="text-gray-800 font-medium leading-relaxed text-base sm:text-lg">
                 You + AI = one-of-a-kind creativity

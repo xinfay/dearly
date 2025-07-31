@@ -32,6 +32,7 @@ app.add_middleware(
 # Initialize OpenAI client at startup
 @app.on_event("startup")
 def startup_event():
+    env_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src/backend/.env'))
     load_dotenv()
     key = os.getenv("OPENAI_API_KEY")
     if key:
