@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Heart, Menu, X } from 'lucide-react';
 
 const defaultNavigationItems = [
-  { label: 'How It Works', href: '#how-it-works' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'About', href: '#about' },
-  { label: 'Support', href: '#support' },
-  { label: 'Start Creating', href: '/build', variant: 'primary' }
+  { label: 'How It Works', href: '/#how-it-works' },
+  { label: 'About', href: '/#about' },
+  { label: 'Support', href: '/#support' },
+  { label: 'Start Creating', href: '/#gifts', variant: 'primary' }
 ];
 
 export const Header = ({
@@ -25,7 +24,7 @@ export const Header = ({
 
     switch (variant) {
       case 'primary':
-        return `${baseStyles} bg-rose-500 text-white hover:bg-rose-600 shadow-sm hover:shadow-md`;
+        return `${baseStyles} bg-rose-500 text-white hover:bg-rose-600 shadow-sm hover:shadow-md hover:text-white transform transition-transform hover:scale-105`;
       case 'secondary':
         return `${baseStyles} bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200`;
       default:

@@ -6,6 +6,19 @@ import quotes from '../data/testimonials'
 
 
 function Home() {
+  // Scroll to anchor if hash is present in URL (for navigation from other pages)
+  useEffect(() => {
+    if (window.location.hash) {
+      const id = window.location.hash.replace('#', '');
+      const el = document.getElementById(id);
+      if (el) {
+        // Timeout ensures scroll after DOM paint
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }, 0);
+      }
+    }
+  }, []);
   const [currentQuote, setCurrentQuote] = useState(0);
 
   const navigate = useNavigate()
@@ -87,7 +100,7 @@ function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="w-full py-24 px-4 md:px-6 bg-gradient-to-br from-yellow-100 via-rose-50 to-pink-100 bg-opacity-60 backdrop-blur-lg relative overflow-hidden">
+      <section id="how-it-works" className="w-full py-24 px-4 md:px-6 bg-gradient-to-br from-yellow-100 via-rose-50 to-pink-100 bg-opacity-60 backdrop-blur-lg relative overflow-hidden">
 
         {/* Background Sparkles */}
         <div className="absolute inset-0 pointer-events-none z-0">
@@ -252,7 +265,7 @@ function Home() {
 
 
       {/* Quick Stats */}
-      <section className="relative w-full py-24 px-4 md:px-6 bg-[#e8e3f3] overflow-hidden">
+      <section id="about" className="relative w-full py-24 px-4 md:px-6 bg-[#e8e3f3] overflow-hidden">
 
         <div className="absolute inset-0 pointer-events-none z-0">
           <div className="absolute w-[20%] h-[20%] bg-yellow-100 opacity-10 blur-3xl top-[50%] left-[30%] animate-pulse" />
@@ -303,7 +316,7 @@ function Home() {
 
 
       {/* Footer */}
-      <footer className="w-full bg-gray-800 text-white py-16 px-4 md:px-6">
+      <section id="support" className="w-full bg-gray-800 text-white py-16 px-4 md:px-6">
         <div className="w-full max-w-6xl mx-auto">
           {/* Top Grid */}
           <div className="grid gap-12 md:grid-cols-2 mb-12">
@@ -349,7 +362,8 @@ function Home() {
             </p>
           </div>
         </div>
-      </footer>
+      </section>
+      
     </div>
   );
 }
