@@ -21,6 +21,10 @@ export const ProductInfo = ({ product }) => {
     }
   };
 
+  console.log("product", product);
+  console.log("tabs.reviews", product?.tabs?.reviews);
+  console.log("product.reviews", product?.reviews);
+
   const navigate = useNavigate();
   const buildRedirect = () => {
     navigate('/build', {
@@ -37,10 +41,46 @@ export const ProductInfo = ({ product }) => {
       {/* Product Name and Rating */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">{product.name}</h1>
-        <div className="flex items-center space-x-2">
-          <StarRating rating={product.rating} showNumber />
-          <span className="text-sm text-gray-500">({product.reviews} reviews)</span>
-        </div>
+
+        {(() => {
+          const reviews = Array.isArray(product.tabs?.reviews)
+            ? product.tabs.reviews.filter(Boolean)
+            : Array.isArray(product.reviews)
+              ? product.reviews.filter(Boolean)
+              : [];
+
+          const count = reviews.length;
+          const avg = count
+            ? reviews.reduce(
+                (sum, r) => sum + (typeof r.rating === "number" ? r.rating : Number(r.rating) || 0),
+                0
+              ) / count
+            : 0;
+
+          const hasStarRating = typeof StarRating !== "undefined";
+          const FallbackStars = ({ rating }) => {
+            const r = Math.max(0, Math.min(5, Math.round(rating || 0)));
+            return (
+              <span aria-label={`Rating ${r} out of 5`} className="text-sm">
+                {"★".repeat(r)}
+                {"☆".repeat(5 - r)}
+              </span>
+            );
+          };
+
+          return (
+            <div className="flex items-center space-x-2">
+              {hasStarRating ? (
+                <StarRating rating={avg} showNumber />
+              ) : (
+                <FallbackStars rating={avg} />
+              )}
+              <span className="text-sm text-gray-500">
+                ({count} {count === 1 ? "review" : "reviews"})
+              </span>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Start Customizing Button */}

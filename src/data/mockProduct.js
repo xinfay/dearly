@@ -14,24 +14,36 @@ export const mockProduct = [
     technique: "Sublimation",
     features: ["Bestseller", "Dishwasher safe", "11oz capacity", "Lead and BPA free"],
     tags: ["Ceramic", "Glossy"],
-    rating: 5,
-    reviews: 1978,
     short_description: "Transform your morning routine with personalized warmth",
-    description:
-      "This sturdy mug is perfect for your morning coffee, afternoon tea, or whatever hot beverage you enjoy. It's glossy white and yields vivid prints that retain their quality when dish-washed and microwaved. Add a graphic of your choice and add this best-seller to your store, so others can enjoy your magical designs too!",
     colors: ["White"],
-    fitInfo: {
-      fabricWeight: "308 g/m²",
-      fabric: "95% recycled polyester, 5% spandex",
-      softness: "Extra soft",
-      fit: "Relaxed fit",
-      shoulders: "Drop shoulders"
-    },
-    disclaimers: [
-      "Details from the inner fabric layer may subtly show through.",
-      "This is an expected result of the printing process.",
-      "In case of low fabric stock, we may substitute a similar option."
-    ]
+    tabs: {
+      description: "This sturdy mug is perfect for your morning coffee, afternoon tea, or whatever hot beverage you enjoy. It's glossy white and yields vivid prints that retain their quality when dish-washed and microwaved. Add a graphic of your choice and add this best-seller to your store, so others can enjoy your magical designs too!",
+      disclaimer: [
+        "Details from the inner fabric layer may subtly show through.",
+        "This is an expected result of the printing process.",
+        "In case of low fabric stock, we may substitute a similar option."
+      ],
+      decoration_technique: "Mug Sublimation - design is printed with dye ink on paper and then transferred directory onto the product with heat.",
+      reviews:[
+        {
+          author: "Ava",
+          rating: 5,
+          title: "Loved it!",
+          body: "Great quality and colors.",
+          date: "2025-07-10"
+        },
+        {
+          author: "Ben",
+          rating: 4,
+          title: "Likes it!",
+          body: "Love the shine.",
+          date: "2025-07-28"
+        }
+      ],
+      source: {
+        country: "United States"
+      }
+    }
   },
 
   {

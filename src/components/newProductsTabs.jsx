@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { StarRating } from './StarRating';
-import PrintfulLogo from "../components/maps/PrintfulLogo.png";
+import PrintfulLogo from "../maps/PrinfulLogo.png"
 
 // const product = {
 //   id: "poster-rose",
@@ -170,38 +170,23 @@ function DisclaimerSection({ value }) {
 function SourceSection({ value }) {
   if (!value) return null;
 
-  const countries = Array.isArray(value.country)
-    ? value.country
-    : [value.country].filter(Boolean);
-
-  const description =
-    value.description ||
-    "The product blanks are made in collaboration with our trusted partners and customized in our facilities.";
-
   return (
-    <div className="space-y-6">
-      {/* Subheading */}
-      <h3 className="text-lg font-semibold text-gray-900">
-        Product sourced from:
-      </h3>
-
-      {/* Country bullet points */}
+    <div className="space-y-4">
       <ul className="list-disc pl-6 text-gray-700 text-sm">
-        {countries.map((c, i) => (
-          <li key={i}>{c}</li>
-        ))}
+        <li>{value.country}</li>
       </ul>
 
-      {/* Logo + message */}
-      <div className="flex items-center gap-6">
-        <div className="flex-shrink-0">
-          <img
-            src={PrintfulLogo}
-            alt="Printful"
-            className="h-28 object-contain" // larger logo
-          />
-        </div>
-        <p className="text-gray-700 text-sm leading-relaxed">{description}</p>
+      {/* Printful logo and text */}
+      <div className="flex items-center space-x-3">
+        <img
+          src={PrintfulLogo} // import PrintfulLogo from '../assets/maps/PrintfulLogo.png';
+          alt="Printful"
+          className="h-8 object-contain"
+        />
+        <p className="text-gray-700 text-sm leading-relaxed">
+          The product blanks are made in collaboration with our trusted partners and
+          customized in our facilities.
+        </p>
       </div>
     </div>
   );
@@ -242,9 +227,11 @@ function DefaultSection({ value }) {
 
 function SectionByKey({ k, value }) {
   switch (k.toLowerCase()) {
+    case "review":
     case "reviews":
       return <ReviewSection value={value} />;
     case "disclaimer":
+    case "disclaimers":
       return <DisclaimerSection value={value} />;
     case "source":
       return <SourceSection value={value} />;
