@@ -32,7 +32,7 @@ function Checkout() {
     state: '',
     zipCode: '',
     // ELSE NEEDED for PRINTFUL FULFILLMENT: variantId, url
-    variantId: '22755',    // remove later
+    variantId: location.state.variantId,    // remove later
     url: 'https://static.wikia.nocookie.net/cartoons/images/e/ed/Profile_-_SpongeBob_SquarePants.png/revision/latest?cb=20240420115914',          // remove later
   });
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
@@ -233,6 +233,11 @@ function Checkout() {
           <h4 className="font-medium text-gray-900">{item.name}</h4>
           <p className="text-sm text-gray-600 mt-1 leading-relaxed">
             {item.short_description}
+          </p>
+          <p className="text-base font-semibold text-gray-800 mt-1">
+            <span className="inline-block mr-2">{location.state.size}</span>
+            <span className="text-gray-500">-</span>
+            <span className="inline-block ml-2">{location.state.color}</span>
           </p>
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center">
@@ -619,35 +624,6 @@ function Checkout() {
           <span>
             Your heartfelt creation will be carefully crafted and shipped with love.
           </span>
-        </div>
-      </div>
-
-
-       {/* TO BE CHANGED: this is a test form for Printful fulfillment */}
-      <div className="bg-white rounded-lg p-4 border border-gray-200 space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Printful Variant ID (test)
-          </label>
-          <input
-            type="text"
-            value={shippingInfo.variantId}
-            onChange={(e) => handleInputChange('variantId', e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-            placeholder="eg. 22755"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Image URL (test)
-          </label>
-          <input
-            type="text"
-            value={shippingInfo.url}
-            onChange={(e) => handleInputChange('url', e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-            placeholder="https://..."
-          />
         </div>
       </div>
 

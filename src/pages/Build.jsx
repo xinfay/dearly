@@ -11,12 +11,19 @@ function Build() {
   const location = useLocation();
   const itemId = location.state?.itemId;
   const item = mockProduct.find((anItem) => anItem.id === itemId);
+  const variantId = location.state.variantId;
 
   if (!item) return <h1>Item not found</h1>
 
-  // TEMPORARY: redirect to a checkout page
   const inputRedirect = (itemId) => {
-    navigate('/checkout', { state: { itemId: itemId} });
+    navigate('/checkout', {
+      state: {
+        itemId: itemId,
+        size: location.state.size,
+        color: location.state.color,
+        variantId
+      }
+    });
   };
 
   const [message, setMessage] = useState('');

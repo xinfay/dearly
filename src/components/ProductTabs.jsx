@@ -2,48 +2,6 @@ import React, { useMemo, useState } from "react";
 import { StarRating } from './StarRating';
 import PrintfulLogo from "../components/maps/PrintfulLogo.png";
 
-// const product = {
-//   id: "poster-rose",
-//   name: "Rose Poster",
-
-//   // Optional: Controls tab display order
-//   tabsOrder: ["overview", "specs", "review", "disclaimer"],
-
-//   // Required: Defines tab content
-//   tabs: {
-//     overview: "A stunning rose print, perfect for home décor.",
-
-//     // Plain object → rendered as a table
-//     specs: {
-//       Material: "Cotton blend",
-//       GSM: 180,
-//       Country: "Canada"
-//     },
-
-//     // Special key: review/reviews → special review layout
-//     review: [
-//       {
-//         author: "Ava",
-//         rating: 5,
-//         title: "Loved it!",
-//         body: "Great quality and colors.",
-//         date: "2025-07-10"
-//       },
-//       {
-//         author: "Zed",
-//         rating: 4,
-//         body: "Nice print, but shipping was slow."
-//       }
-//     ],
-
-//     // Special key: disclaimer/disclaimers → bullet points
-//     disclaimer: [
-//       "Colors may vary by screen settings.",
-//       "Hand-measured; allow ±2mm variance."
-//     ]
-//   }
-// };
-
 
 function humanize(key) {
   if (!key) return "";
