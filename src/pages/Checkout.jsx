@@ -10,7 +10,6 @@ import { loadStripe } from '@stripe/stripe-js';
 import GetPayment from '../components/GetPayment';
 import { useNavigate } from 'react-router-dom';
 
-console.log("Loaded Stripe key:", import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 
