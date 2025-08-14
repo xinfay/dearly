@@ -8,6 +8,6 @@ services:
     healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11
+        value: 3.11.9
       - key: AGENT_SHARED_SECRET
         generateValue: true
