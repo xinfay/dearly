@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
 import { Heart, Send, ArrowLeft, Save, Sparkles, MessageCircle, Eye, Clock } from 'lucide-react';
 import Layout from '../components/Layout';
+import { uploadGeneratedImage, blobToBase64 } from '../components/checkout/utils/printful';
+
 
 function Build() {
 
@@ -12,19 +14,38 @@ function Build() {
   const itemId = location.state?.itemId;
   const item = mockProduct.find((anItem) => anItem.id === itemId);
   const variantId = location.state.variantId;
+  if (!variantId) {
+    console.warn('variantId missing from router state — return to product selection.');
+  }
 
   if (!item) return <h1>Item not found</h1>
 
-  const inputRedirect = (itemId) => {
-    navigate('/checkout', {
-      state: {
-        itemId: itemId,
-        size: location.state.size,
-        color: location.state.color,
-        variantId
+  const inputRedirect = async () => {
+    try {
+      // Ensure we have a canonical Blob URL to pass to Checkout
+      let url = printfileUrl;
+      if (!url) {
+        if (!generatedImageUrl) {
+          alert('Please generate an image first.');
+          return;
+        }
+        url = await uploadFromUrl(generatedImageUrl);
       }
-    });
+
+      navigate('/checkout', {
+        state: {
+          itemId: item.id,
+          size: location.state.size,
+          color: location.state.color,
+          variantId,
+          printfileUrl: url
+        }
+      });
+    } catch (e) {
+      alert(`Unable to proceed: ${e.message || e}`);
+    }
   };
+
 
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +58,11 @@ function Build() {
       timestamp: new Date()
     }
   ]);
+
   const [generatedImageUrl, setGeneratedImageUrl] = useState(null);
+  const [printfileUrl, setPrintfileUrl] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
 
   const navigate = useNavigate()
 
@@ -72,6 +97,43 @@ function Build() {
     setMessages(prev => prev.filter(msg => msg.content !== '__loading__'));
   };
 
+  async function uploadFromUrl(imageUrl) {
+    try {
+      setIsUploading(true);
+      setUploadError(null);
+
+      // Fetch the generated image bytes
+      const resp = await fetch(imageUrl, { mode: 'cors' });
+      if (!resp.ok) throw new Error(`Failed to fetch image (${resp.status})`);
+
+      const blob = await resp.blob();
+
+      // Infer extension from content-type; default to png
+      let ext = 'png';
+      const ct = blob.type || '';
+      if (ct.includes('jpeg') || ct.includes('jpg')) ext = 'jpg';
+      else if (ct.includes('png')) ext = 'png';
+
+      // Convert to base64 (no data: prefix)
+      const base64 = await blobToBase64(blob);
+
+      // Upload to Vercel Blob (returns public CDN URL)
+      const { url } = await uploadGeneratedImage({ base64, ext });
+
+      // Save canonical printfile URL and also use it for preview
+      setPrintfileUrl(url);
+      setGeneratedImageUrl(url);
+
+      return url;
+    } catch (err) {
+      console.error('Upload failed:', err);
+      setUploadError(err.message || 'Upload failed');
+      throw err;
+    } finally {
+      setIsUploading(false);
+    }
+}
+
   const handleSendMessage = async () => {
     if (!message.trim() || isLoading) return;
     addMessage(message, 'user');
@@ -81,7 +143,7 @@ function Build() {
     try {
       // Always send product name as context in every message
       const context = `The product is: ${item?.name || 'Unknown Product'}`;
-      const response = await fetch('http://localhost:8004/chat', {
+      const response = await fetch('/api/agent/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: `${context}\n${message}` })
@@ -102,7 +164,10 @@ function Build() {
         responses.forEach((msg) => {
           if (!msg || (typeof msg === 'string' && msg.trim() === '')) return; // Skip blank/null/undefined
           if (typeof msg === 'string' && msg.includes('[Image generated: output.png]')) {
-            const imageUrl = `http://localhost:8004/image?ts=${Date.now()}`;
+            // (If you proxied the image via Vercel, swap the URL accordingly)
+            const imageUrl = `/api/agent/image?ts=${Date.now()}`;
+
+            // Show immediate preview
             setGeneratedImageUrl(imageUrl);
             addMessage(
               <img
@@ -112,6 +177,9 @@ function Build() {
               />,
               'assistant'
             );
+
+            // Kick off upload to Vercel Blob; when done, preview will switch to the CDN URL
+            uploadFromUrl(imageUrl).catch(() => {});
           } else {
             addMessage(msg, 'assistant');
           }
@@ -175,10 +243,11 @@ function Build() {
             
             <div className="flex items-center space-x-4">
               <button 
-              onClick={() => inputRedirect(item.id)}
-              className="flex items-center px-4 py-2 bg-rose-100 text-rose-700 rounded-full hover:bg-rose-200 transition-colors duration-200">
+                onClick={inputRedirect}
+                disabled={isUploading}
+                className="flex items-center px-4 py-2 bg-rose-100 text-rose-700 rounded-full hover:bg-rose-200 disabled:opacity-50 transition-colors duration-200">
                 <Save className="w-4 h-4 mr-2" />
-                Save Progress
+                {isUploading ? 'Preparing…' : 'Proceed to Checkout'}
               </button>
             </div>
           </div>
@@ -331,6 +400,12 @@ function Build() {
                   <p className="text-sm text-rose-700 text-center">
                     <strong>Magic in progress:</strong> Your words are being transformed into a beautiful, personalized design.
                   </p>
+                  {isUploading && (
+                    <div className="mt-3 text-xs text-gray-500 text-center">Uploading your design securely…</div>
+                  )}
+                  {uploadError && (
+                    <div className="mt-3 text-xs text-red-600 text-center">Upload error: {uploadError}</div>
+                  )}
                 </div>
               </div>
             </div>

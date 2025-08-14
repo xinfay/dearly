@@ -9,6 +9,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import GetPayment from '../components/GetPayment';
 import { useNavigate } from 'react-router-dom';
+import { createPrintfulOrder } from '../components/checkout/utils/printful';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -30,10 +31,10 @@ function Checkout() {
     city: '',
     state: '',
     zipCode: '',
-    // ELSE NEEDED for PRINTFUL FULFILLMENT: variantId, url
-    variantId: location.state.variantId,    // remove later
-    url: 'https://static.wikia.nocookie.net/cartoons/images/e/ed/Profile_-_SpongeBob_SquarePants.png/revision/latest?cb=20240420115914',          // remove later
   });
+  const variantId = location.state?.variantId;
+  const printfileUrl = location.state?.printfileUrl;
+
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('card');
   const [isGift, setIsGift] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
@@ -112,59 +113,46 @@ function Checkout() {
   const [submitPayment, setSubmitPayment] = useState(null);
 
   const handlePlaceOrder = async () => {
-    // Here you would integrate with Stripe
-    console.log('Processing order with Stripe...', {
-      items: item,
-      shipping: shippingInfo,
-      paymentMethod: selectedPaymentMethod,
-      total: total,
-      isGift,
-      giftMessage
-    });
-
-    console.log("Sending to Printful API");
-
-    const printfulOrder = {
-      name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
-      address: shippingInfo.address,
-      quantity: quantity || 1,
-      variantId: parseInt(shippingInfo.variantId),
-      city: shippingInfo.city,
-      statecode: shippingInfo.state,
-      countrycode: shippingInfo.country,
-      zip: shippingInfo.zipCode,
-      url: shippingInfo.url
-    };
+    if (!variantId || !printfileUrl) {
+      alert('Missing product info. Please return to Build and try again.');
+      return;
+    }
 
     try {
+      // Build Printful payload in their expected format
       const payload = {
-        ...printfulOrder,
-        productId: itemId,
+        recipient: {
+          name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
+          address1: shippingInfo.address,
+          city: shippingInfo.city,
+          state_code: shippingInfo.state,     // e.g., "ON"
+          country_code: shippingInfo.country, // e.g., "CA"
+          zip: shippingInfo.zipCode,
+          email: shippingInfo.email
+        },
+        items: [
+          {
+            variant_id: Number(variantId),
+            quantity: quantity || 1,
+            files: [
+              { type: 'default', url: printfileUrl }
+            ]
+          }
+        ]
       };
-      console.log("Sending payload:", payload);
 
-      const response = await fetch("http://127.0.0.1:8000/api/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      console.log('📦 Sending Printful payload:', payload);
 
-      console.log("Fetch finished:", response);
-      const result = await response.json();
-      console.log("✅ Order response:", result);
-      if (result.code === 200) {
-        setOrderStatus('success');
-      } else if (result.code === 400) {
-        setOrderStatus('error');
-      }
+      const result = await createPrintfulOrder(payload);
+      console.log('✅ Order response:', result);
 
-      // Output the result to alert
-      // alert("Order submitted: " + JSON.stringify(result));
+      setOrderStatus('success');
     } catch (error) {
-      console.error("❌ Error in handleSubmit:", error);
-      alert("Failed to submit order.");
+      console.error('❌ Error placing order:', error);
+      setOrderStatus('error');
     }
   };
+
 
   const [quantity, setQuantity] = useState(1); // Initialize quantity
   const incQuantity = () => setQuantity(prev => prev + 1);
