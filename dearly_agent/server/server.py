@@ -39,6 +39,16 @@ client = ServerClient()
 # ---- Startup: load env and init OpenAI client ----
 @app.on_event("startup")
 def startup_event():
+    import openai, httpx
+        print("OPENAI VERSION:", getattr(openai, "__version__", "unknown"))
+        print("HTTPX VERSION:", getattr(httpx, "__version__", "unknown"))
+        try:
+            from openai import OpenAI
+            _tmp = OpenAI(api_key=key or "sk-...dummy")
+            print("HAS RESPONSES:", hasattr(_tmp, "responses"))
+        except Exception as e:
+            print("OPENAI INIT ERROR:", repr(e))
+            
     # On Render, env vars are provided by the platform; load_dotenv is harmless locally.
     load_dotenv()
     key = os.getenv("OPENAI_API_KEY")
