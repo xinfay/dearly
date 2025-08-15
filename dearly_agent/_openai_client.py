@@ -35,7 +35,10 @@ class Client:
     def __init__(self, api_key: str, model: str = "gpt-4.1-nano-2025-04-14") -> None:
         self._key = api_key
         self._model = model
-        self._client = OpenAI(api_key=api_key)
+        self._client = OpenAI(
+            api_key=api_key,
+            base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
+        )
         self._context = []
         
         # Get the directory where this module is located
