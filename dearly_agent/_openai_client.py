@@ -66,10 +66,9 @@ class Client:
             return base64.b64encode(image_file.read()).decode("utf-8")
 
     def response(self, message: str = None, debug=False):
-        # Append user message + re-load prompt if context was reset
+        # Append user message + ensure developer prompt present
         if message:
             if not self._context or (len(self._context) == 1 and self._context[0].get("role") == "developer"):
-                # reset & re-add prompt
                 self._context = []
                 module_dir = os.path.dirname(os.path.abspath(__file__))
                 prompt_path = os.path.join(module_dir, 'prompt')
@@ -78,45 +77,63 @@ class Client:
             self._context.append({"role": "user", "content": message})
             print(f"[User]: {message}")
 
-        # Limit context to last 5 messages, and summarize image markers/long texts
+        # Helper: compress long assistant image contents into a marker
         def summarize_img_tag(msg):
             if isinstance(msg, dict) and "content" in msg and isinstance(msg["content"], str):
                 if msg.get("role") == "assistant" and '<img src="data:image/png;base64,' in msg["content"]:
                     msg = msg.copy()
                     msg["content"] = "[Image generated: output.png]"
-                elif len(msg["content"]) > 200:
+                elif len(msg["content"]) > 1200:
                     msg = msg.copy()
-                    msg["content"] = msg["content"][-200:]
+                    msg["content"] = msg["content"][:1200]
             return msg
 
-        self._context = [summarize_img_tag(m) for m in self._context[-5:]]
+        # Keep only a short rolling context
+        self._context = [summarize_img_tag(m) for m in self._context[-6:]]
 
         print("\n[DEBUG] Context sent to model:")
         for i, msg in enumerate(self._context):
             print(f"  [{i}] {msg}")
 
-        # ==== Primary path: use the Responses API when available ====
+        # Heuristic: did the user “confirm” to proceed? (then we’ll force an image)
+        def user_confirmed(text: str) -> bool:
+            t = (text or "").lower().strip()
+            return any(p in t for p in [
+                "i'd like that", "id like that", "looks good", "let's do it", "lets do it",
+                "proceed", "go ahead", "yes please", "yes, please", "that works", "make it",
+                "generate it", "create it", "ship it"
+            ])
+
+        latest_user = ""
+        for m in reversed(self._context):
+            if m.get("role") == "user" and isinstance(m.get("content"), str):
+                latest_user = m["content"]
+                break
+
         use_responses = hasattr(self._client, "responses") and hasattr(self._client.responses, "create")
 
+        # ==== 1) Try the Responses API with tools (your current flow) ====
+        tried_tool = False
         if use_responses:
             response = self._client.responses.create(
                 model=self._model,
-                input=self._context,   # supports developer/user/assistant roles
+                input=self._context,
                 tools=TOOLS,
+                tool_choice="auto",  # model may or may not choose the tool
             )
 
-            # Handle tool/function calls
-            for tool_call in getattr(response, "output", []) or []:
-                if getattr(tool_call, "type", None) == "function_call":
+            # Look for tool/function calls
+            for item in (getattr(response, "output", []) or []):
+                if getattr(item, "type", None) == "function_call":
+                    tried_tool = True
+                    tool_call = item
                     print(f"[Tool Call]: {tool_call}")
-                    self._context.append(tool_call)
 
                     if tool_call.name == "_generate_image":
                         args = json.loads(tool_call.arguments or "{}")
-                        prompt = args.get("prompt", "")
+                        prompt = args.get("prompt", "") or latest_user
                         image_path = self._generate_image(prompt)
 
-                        # Return only plain text marker for the UI
                         result_message = "[Image generated: output.png]"
                         print(f"[Tool Call Output]: {result_message}")
                         self._context.append({
@@ -125,50 +142,57 @@ class Client:
                             "output": result_message
                         })
 
-                        # Build filtered context for a follow-up prompt
+                        # Follow-up nudge
                         filtered_context = []
                         for msg in self._context:
                             if isinstance(msg, dict) and msg.get("type") == "function_call_output":
                                 continue
                             elif isinstance(msg, dict):
                                 filtered_context.append(summarize_img_tag(msg))
-                        filtered_context = filtered_context[-5:]
-
-                        print("\n[DEBUG] Filtered context for follow-up model call:")
-                        for i, msg in enumerate(filtered_context):
-                            print(f"  [{i}] {msg}")
-
+                        filtered_context = filtered_context[-6:]
                         filtered_context.append({
                             "role": "system",
-                            "content": (
-                                "You have just generated and shown an image to the user. "
-                                "Now, you must ask the user for feedback about the image and specifically inquire if "
-                                "they would like any changes or edits. Do not proceed to generate another image until "
-                                "the user has responded with their feedback or requested edits."
-                            )
+                            "content": ("You have just generated and shown an image to the user. "
+                                        "Now ask for feedback and whether they want any edits. "
+                                        "Do not generate another image until they respond.")
                         })
 
-                        followup_response = self._client.responses.create(
+                        follow = self._client.responses.create(
                             model=self._model,
                             input=filtered_context,
-                            tools=TOOLS,
                         )
-                        followup_text = getattr(followup_response, "output_text", "") or ""
-                        self._context.append({"role": "assistant", "content": followup_text})
+                        follow_text = getattr(follow, "output_text", "") or "Would you like any changes?"
+                        self._context.append({"role": "assistant", "content": follow_text})
+                        return [result_message, follow_text]
 
-                        if not followup_text.strip():
-                            followup_text = "Would you like to edit or improve this design? Let me know your suggestions!"
-
-                        return [result_message, followup_text]
-
-            # Default text response via Responses API
+            # If no tool call, but we got text — return it (we may still force image below)
             text = getattr(response, "output_text", "") or ""
-            self._context.append({"role": "assistant", "content": text})
-            print(f"[Assistant]: {text}")
-            return [text]
+            if text:
+                self._context.append({"role": "assistant", "content": text})
+                print(f"[Assistant]: {text}")
 
-        # ==== Fallback path: Chat Completions (text-only), if `.responses` isn't present ====
-        # Map developer -> system for Chat Completions compatibility
+                # ==== 2) If user confirmed AND model didn’t call the tool, force-generate ====
+                if user_confirmed(latest_user) and not tried_tool:
+                    # Use last assistant design text as the image brief if available
+                    assist_text = ""
+                    for m in reversed(self._context):
+                        if m.get("role") == "assistant" and isinstance(m.get("content"), str):
+                            assist_text = m["content"]
+                            break
+                    img_prompt = (assist_text or latest_user or "A printable design for the requested mug")
+                    self._generate_image(img_prompt)
+                    result_message = "[Image generated: output.png]"
+                    self._context.append({"role": "assistant", "content": result_message})
+
+                    # Gentle follow-up
+                    follow_text = "Image created! Would you like any tweaks before we proceed?"
+                    self._context.append({"role": "assistant", "content": follow_text})
+                    print(f"[Forced Generation]: {img_prompt}")
+                    return [result_message, follow_text]
+
+                return [text]
+
+        # ==== 3) Fallback: Chat Completions (text only) if Responses API is unavailable ====
         def map_roles_for_chat(msg):
             if not isinstance(msg, dict):
                 return None
@@ -176,23 +200,27 @@ class Client:
             content = msg.get("content")
             if role == "developer":
                 role = "system"
-            if role not in ("system", "user", "assistant"):
-                # skip unknown roles (e.g., tool structures) for the fallback
-                return None
-            if not isinstance(content, str):
+            if role not in ("system", "user", "assistant") or not isinstance(content, str):
                 return None
             return {"role": role, "content": content}
 
         chat_messages = [m for m in (map_roles_for_chat(m) for m in self._context) if m is not None]
-
-        # Use a safe chat model for the fallback (your Responses model may not be valid for chat.completions)
         fallback_model = os.getenv("FALLBACK_CHAT_MODEL", "gpt-4o-mini")
-
         chat = self._client.chat.completions.create(
             model=fallback_model,
             messages=chat_messages
         )
         text = (chat.choices[0].message.content or "").strip()
         self._context.append({"role": "assistant", "content": text})
+
+        # If user confirmed in fallback, force-generate too
+        if user_confirmed(latest_user):
+            self._generate_image(text or latest_user)
+            result_message = "[Image generated: output.png]"
+            self._context.append({"role": "assistant", "content": result_message})
+            follow_text = "Image created! Would you like any tweaks before we proceed?"
+            self._context.append({"role": "assistant", "content": follow_text})
+            return [result_message, follow_text]
+
         print(f"[Assistant/Fallback]: {text}")
         return [text]
