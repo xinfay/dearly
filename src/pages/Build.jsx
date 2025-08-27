@@ -6,6 +6,18 @@ import { Heart, Send, ArrowLeft, Save, Sparkles, MessageCircle, Eye, Clock } fro
 import Layout from '../components/Layout';
 import { uploadGeneratedImage, blobToBase64 } from '../components/checkout/utils/printful';
 
+// Extracts the CDN URL from the assistant's bracketed message
+const extractImageUrl = (text) => {
+  if (typeof text !== "string") return null;
+  const m = /\[Image URL:\s*(https?:\/\/[^\]\s]+)\]/i.exec(text);
+  if (m?.[1]) return m[1];
+
+  // Back-compat with old flow
+  if (text.includes("[Image generated: output.png]")) {
+    return `/api/agent/image?ts=${Date.now()}`;
+  }
+  return null;
+};
 
 function Build() {
 
@@ -22,30 +34,23 @@ function Build() {
 
   const inputRedirect = async () => {
     try {
-      // Ensure we have a canonical Blob URL to pass to Checkout
-      let url = printfileUrl;
-      if (!url) {
-        if (!generatedImageUrl) {
-          alert('Please generate an image first.');
-          return;
-        }
-        url = await uploadFromUrl(generatedImageUrl);
+      if (!printfileUrl) {
+        alert('Please generate an image first.');
+        return;
       }
-
       navigate('/checkout', {
         state: {
           itemId: item.id,
           size: location.state.size,
           color: location.state.color,
           variantId,
-          printfileUrl: url
+          printfileUrl
         }
       });
     } catch (e) {
       alert(`Unable to proceed: ${e.message || e}`);
     }
   };
-
 
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -162,25 +167,34 @@ function Build() {
         // If backend returns an array of messages, handle each
         const responses = Array.isArray(data.response) ? data.response : [data.response];
         responses.forEach((msg) => {
-          if (!msg || (typeof msg === 'string' && msg.trim() === '')) return; // Skip blank/null/undefined
-          if (typeof msg === 'string' && msg.includes('[Image generated: output.png]')) {
-            // (If you proxied the image via Vercel, swap the URL accordingly)
-            const imageUrl = `/api/agent/image?ts=${Date.now()}`;
-
-            // Show immediate preview
-            setGeneratedImageUrl(imageUrl);
+          if (!msg || (typeof msg === 'string' && msg.trim() === '')) return;
+        
+          const url = extractImageUrl(msg);
+        
+          if (url) {
+            // Show it inside the chat
             addMessage(
               <img
-                src={imageUrl}
-                alt="Generated Image"
-                style={{ maxWidth: "100%", borderRadius: "8px" }}
+                src={url}
+                alt="Generated design"
+                style={{ maxWidth: "100%", borderRadius: 8 }}
+                referrerPolicy="no-referrer"
+                loading="eager"
+                decoding="async"
               />,
               'assistant'
             );
-
-            // Kick off upload to Vercel Blob; when done, preview will switch to the CDN URL
-            uploadFromUrl(imageUrl).catch(() => {});
+        
+            // Use for Live Preview and for Checkout
+            setGeneratedImageUrl(url);
+            setPrintfileUrl(url);
+        
+            // If it's the old local proxy, re-upload to Blob in background
+            if (url.startsWith('/api/agent/image')) {
+              uploadFromUrl(url).catch(() => {});
+            }
           } else {
+            // Plain assistant text
             addMessage(msg, 'assistant');
           }
         });
@@ -244,7 +258,7 @@ function Build() {
             <div className="flex items-center space-x-4">
               <button 
                 onClick={inputRedirect}
-                disabled={isUploading}
+                disabled={!printfileUrl || isUploading}
                 className="flex items-center px-4 py-2 bg-rose-100 text-rose-700 rounded-full hover:bg-rose-200 disabled:opacity-50 transition-colors duration-200">
                 <Save className="w-4 h-4 mr-2" />
                 {isUploading ? 'Preparing…' : 'Proceed to Checkout'}
